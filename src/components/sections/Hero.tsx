@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Accent } from "@/components/ui/Accent";
 import { ArrowIcon } from "@/components/site/icons";
+import { MaterialRotator } from "@/components/sections/MaterialRotator";
 
 const POSTER = "/hero/bridal-gold-poster.jpg";
 const VIDEO = "/hero/bridal-gold.mp4";
@@ -30,11 +30,16 @@ export function Hero() {
           <div className="mx-auto w-full max-w-xl">
             <p className="type-nav text-ivory/70">Kundan · Est. Lahore</p>
 
-            <h1
-              id="hero-heading"
-              className="type-h1 mt-5 text-ivory"
-            >
-              Gold that outlives <Accent onDark>the</Accent> occasion
+            {/* The rotating word is decorative duplication for AT, so the
+                heading exposes one stable sentence naming all three
+                materials and the animated copy is hidden from it. */}
+            <h1 id="hero-heading" className="type-h1 mt-5 text-ivory">
+              <span className="sr-only">
+                Gold, diamond and ruby that outlive the occasion
+              </span>
+              <span aria-hidden>
+                <MaterialRotator /> that outlives the occasion
+              </span>
             </h1>
 
             <p className="type-body mt-6 text-ivory/75">
