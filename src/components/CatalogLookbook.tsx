@@ -7,8 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { CatalogMeta } from "@/lib/catalogs";
 import type { Product } from "@/lib/products";
-import { ProductCard } from "@/components/ProductCard";
-import { formatPrice, productHref } from "@/lib/products";
+import { ProductCard } from "@/components/sections/ProductCard";
 import { isLocalPublicSrc } from "@/lib/local-image";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -170,20 +169,10 @@ export function CatalogLookbook({ meta, products }: CatalogLookbookProps) {
         </div>
 
         {products.length > 0 ? (
-          <div className="lb-products product-grid">
+          <div className="lb-products grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 lg:grid-cols-4">
             {products.map((product) => (
               <div key={product.id} className="lb-card">
-                <ProductCard
-                  id={product.id}
-                  slug={product.slug}
-                  href={productHref(product)}
-                  name={product.name}
-                  price={formatPrice(product.price)}
-                  priceValue={product.price}
-                  image={product.image}
-                  aspect="square"
-                  size={product.sizes[1] ?? product.sizes[0]}
-                />
+                <ProductCard product={product} />
               </div>
             ))}
           </div>

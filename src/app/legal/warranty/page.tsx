@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 
 export default function WarrantyPage() {
   return (
-    <LegalPage title="Lifetime warranty" updated="8 September 2026">
+    <LegalPage currentHref="/legal/app"
+      title="Lifetime warranty" updated="8 September 2026">
       <section>
         <h2>1. What we cover</h2>
         <p>

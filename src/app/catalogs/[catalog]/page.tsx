@@ -1,8 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Navigation } from "@/components/Navigation";
-import { Footer } from "@/components/Footer";
+import { SiteShell } from "@/components/site/SiteShell";
 import { CatalogHero } from "@/components/CatalogHero";
 import { CatalogLookbook } from "@/components/CatalogLookbook";
 import {
@@ -46,21 +45,16 @@ export default async function CatalogPage({ params }: PageProps) {
   const others = CATALOGS.filter((c) => c !== catalog);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation variant="dark" />
-
+    <SiteShell overlay>
       <CatalogHero catalog={catalog} />
 
-      <main>
-        <CatalogLookbook meta={meta} products={products} />
+      <CatalogLookbook meta={meta} products={products} />
 
-        <div className="container-luxury border-t border-border py-16 md:py-20">
+      <div className="mx-auto max-w-[1280px] border-t border-border px-4 py-14 sm:px-6 md:py-20 lg:px-8">
           <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 className="font-display text-[clamp(1.75rem,3vw,2.25rem)] text-ink">
-                Continue exploring
-              </h2>
-              <p className="mt-2 max-w-sm text-[14px] leading-relaxed text-muted">
+              <h2 className="type-h2">Continue exploring</h2>
+              <p className="type-body mt-3 max-w-sm">
                 Other houses of the maison, and the materials that compose them.
               </p>
             </div>
@@ -72,7 +66,7 @@ export default async function CatalogPage({ params }: PageProps) {
                 <Link
                   key={c}
                   href={`/catalogs/${c}`}
-                  className="text-[12px] tracking-[0.14em] text-ink/60 uppercase transition-colors hover:text-gold"
+                  className="type-nav text-muted hover:text-ink"
                 >
                   {catalogMeta[c].title}
                 </Link>
@@ -81,17 +75,14 @@ export default async function CatalogPage({ params }: PageProps) {
                 <Link
                   key={m}
                   href={`/materials/${m}`}
-                  className="text-[12px] tracking-[0.14em] text-ink/60 uppercase transition-colors hover:text-gold"
+                  className="type-nav text-muted hover:text-ink"
                 >
                   {materialMeta[m].title}
                 </Link>
               ))}
             </nav>
           </div>
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </SiteShell>
   );
 }

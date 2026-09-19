@@ -1,17 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Navigation } from "@/components/Navigation";
-import { Footer } from "@/components/Footer";
-import { ProductCard } from "@/components/ProductCard";
+import { SiteShell } from "@/components/site/SiteShell";
+import { PageHero } from "@/components/site/PageHero";
+import { ProductCard } from "@/components/sections/ProductCard";
 import { MaterialHero } from "@/components/MaterialHero";
 import {
   MATERIALS,
-  formatPrice,
   getProducts,
   isMaterial,
   materialMeta,
-  productHref,
   type Material,
 } from "@/lib/products";
 
@@ -29,10 +27,7 @@ export async function generateMetadata({
   const { material: raw } = await params;
   if (!isMaterial(raw)) return { title: "Material — Kundan" };
   const meta = materialMeta[raw];
-  return {
-    title: `${meta.title} — Kundan`,
-    description: meta.description,
-  };
+  return { title: `${meta.title} — Kundan`, description: meta.description };
 }
 
 export default async function MaterialPage({ params }: PageProps) {
@@ -41,86 +36,70 @@ export default async function MaterialPage({ params }: PageProps) {
   const material = raw as Material;
   const meta = materialMeta[material];
   const products = await getProducts({ material });
-
   const others = MATERIALS.filter((m) => m !== material);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation variant="dark" />
-
+    <SiteShell overlay>
       <MaterialHero material={material} />
 
-      <main className="pb-8 md:pb-12">
-        <div className="container-luxury pt-16 md:pt-24">
-          <div className="mb-12 flex flex-col justify-between gap-6 border-b border-border pb-8 md:mb-16 md:flex-row md:items-end">
-            <div className="max-w-xl">
-              <p className="mb-3 text-[11px] tracking-[0.24em] text-gold uppercase">
-                The edit
-              </p>
-              <h2
-                id="material-grid"
-                className="scroll-mt-28 font-display text-[clamp(2.25rem,4vw,3.5rem)] font-light leading-[1.05] text-ink"
-              >
-                {meta.title} pieces
-              </h2>
-              <p className="mt-4 text-[15px] leading-[1.85] text-muted">
-                {meta.description}
-              </p>
-            </div>
-            <p className="text-[11px] tracking-[0.18em] text-muted uppercase">
-              {products.length} pieces
+      <PageHero
+        eyebrow="The edit"
+        title={meta.title}
+        accent="pieces"
+        description={meta.description}
+        crumbs={[{ label: "Materials" }, { label: meta.title }]}
+        headingLevel={2}
+      />
+
+      <div className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+        <p className="type-nav mb-10 text-muted">
+          {products.length} {products.length === 1 ? "piece" : "pieces"}
+        </p>
+
+        {products.length === 0 ? (
+          <div className="border border-border bg-card px-6 py-16 text-center">
+            <p className="type-h3">
+              Nothing set in {meta.title.toLowerCase()} yet
             </p>
+            <p className="type-body mx-auto mt-3">
+              New pieces are added as they leave the atelier.
+            </p>
+            <Link
+              href="/collections/rings"
+              className="type-button mt-7 inline-flex items-center gap-2 bg-ink px-7 py-3.5 text-ivory"
+            >
+              Browse the collection
+            </Link>
           </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 lg:grid-cols-4">
+            {products.map((product, i) => (
+              <ProductCard key={product.id} product={product} priority={i < 4} />
+            ))}
+          </div>
+        )}
 
-          {products.length === 0 ? (
-            <p className="py-20 text-center text-sm text-muted">
-              Pieces in {meta.title.toLowerCase()} are arriving soon.
-            </p>
-          ) : (
-            <div className="product-grid">
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  id={product.id}
-                  slug={product.slug}
-                  href={productHref(product)}
-                  name={product.name}
-                  price={formatPrice(product.price)}
-                  priceValue={product.price}
-                  image={product.image}
-                  aspect="square"
-                  size={product.sizes[1] ?? product.sizes[0]}
-                />
-              ))}
-            </div>
-          )}
-
-          <div className="mt-20 border-t border-border pt-14">
-            <p className="mb-6 text-[11px] tracking-[0.24em] text-gold uppercase">
-              Continue exploring
-            </p>
-            <div className="flex flex-wrap gap-4">
-              {others.map((m) => (
-                <Link
-                  key={m}
-                  href={`/materials/${m}`}
-                  className="inline-flex h-12 items-center rounded-full border border-border px-6 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-gold hover:text-gold"
-                >
-                  {materialMeta[m].title}
-                </Link>
-              ))}
+        <div className="mt-16 border-t border-border pt-10">
+          <h2 className="type-nav text-muted">Continue exploring</h2>
+          <div className="mt-5 flex flex-wrap gap-3">
+            {others.map((m) => (
               <Link
-                href="/collections/rings"
-                className="inline-flex h-12 items-center rounded-full bg-gold px-6 text-[11px] tracking-[0.16em] text-void uppercase transition-all hover:-translate-y-0.5 hover:bg-gold-bright"
+                key={m}
+                href={`/materials/${m}`}
+                className="type-button inline-flex items-center rounded-full border border-ink/25 px-6 py-3 text-ink transition-colors duration-200 hover:border-ink motion-reduce:transition-none"
               >
-                All rings
+                {materialMeta[m].title}
               </Link>
-            </div>
+            ))}
+            <Link
+              href="/collections/rings"
+              className="type-button inline-flex items-center bg-ink px-6 py-3 text-ivory"
+            >
+              All collections
+            </Link>
           </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </SiteShell>
   );
 }

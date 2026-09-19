@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 
 export default function ReturnsPage() {
   return (
-    <LegalPage title="Returns & exchanges" updated="8 September 2026">
+    <LegalPage currentHref="/legal/app"
+      title="Returns & exchanges" updated="8 September 2026">
       <section>
         <h2>1. Ready-to-wear pieces</h2>
         <p>
