@@ -1,7 +1,9 @@
+import { IntroLoader } from "@/components/site/IntroLoader";
 import { AnnouncementBar } from "@/components/site/AnnouncementBar";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { MobileStickyBar } from "@/components/site/MobileStickyBar";
 import { Hero } from "@/components/sections/Hero";
+import { HeroIntro } from "@/components/sections/HeroIntro";
 import { TrustStrip } from "@/components/sections/TrustStrip";
 import { CategoryGrid } from "@/components/sections/CategoryGrid";
 import { CollectionCards } from "@/components/sections/CollectionCards";
@@ -30,10 +32,14 @@ export function HomePage({
 }) {
   return (
     <>
+      {/* Homepage only — interior pages should not sit behind a loader. */}
+      <IntroLoader />
+
       <AnnouncementBar />
       <SiteHeader overlay />
 
       <main id="main">
+        <HeroIntro />
         <Hero />
         <TrustStrip />
         <CategoryGrid />

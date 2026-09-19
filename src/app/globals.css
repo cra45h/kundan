@@ -1714,6 +1714,22 @@
       #c6dced 100%
     );
 
+  /* Loading screen fill — gold rising into diamond.
+     The same two palettes the hero word uses, stacked vertically so the
+     wordmark fills warm at the base and resolves cool and bright at the
+     top as the clip travels up. */
+  --loader-fill: linear-gradient(
+    to top,
+    #a8853c 0%,
+    #d4bc82 15%,
+    #f0e4c4 28%,
+    #e8d9b0 40%,
+    #dfeaf3 54%,
+    #ffffff 70%,
+    #cfe0ec 85%,
+    #ffffff 100%
+  );
+
   /* Best Red -> Dark Auburn -> Canadian Cherry -> Deep Berry.
      No longer used by the hero rotator (gold and diamond only). Retained
      for the ruby material page, where the ground is light and these reds
@@ -1765,4 +1781,45 @@
       -webkit-text-fill-color: currentColor;
     }
   }
+}
+
+/* ==========================================================================
+   Loading screen
+   The overlay ships in the server HTML so it covers from first paint
+   rather than flashing the page first. Two consequences to handle:
+   a no-JS visitor must never be trapped behind it, and the fill needs a
+   clip the animation can drive.
+   ========================================================================== */
+
+@layer utilities {
+  .loader-word {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.5rem, 12vw, 9rem);
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* The coloured copy sits over the dim one and is revealed upward. */
+  .loader-fill {
+    background-image: var(--loader-fill);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    clip-path: inset(100% 0 0 0);
+  }
+
+  @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+    .loader-fill {
+      color: var(--color-gold-bright);
+    }
+  }
+}
+
+/* Without JavaScript nothing can dismiss the overlay, so it must not
+   exist. This is the one case where the page absolutely cannot be left
+   behind a fixed element. */
+.no-js-hidden {
+  display: none;
 }

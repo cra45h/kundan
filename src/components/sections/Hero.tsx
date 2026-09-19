@@ -28,12 +28,14 @@ export function Hero() {
         {/* Copy panel */}
         <div className="flex items-center bg-lacquer px-6 pt-28 pb-20 sm:px-10 lg:px-14 lg:pt-32 lg:pb-24">
           <div className="mx-auto w-full max-w-xl">
-            <p className="type-nav text-ivory/70">Kundan · Est. Lahore</p>
+            <p data-hero-item className="type-nav text-ivory/70">
+              Kundan · Est. Lahore
+            </p>
 
             {/* The rotating word is decorative duplication for AT, so the
                 heading exposes one stable sentence naming both materials
                 and the animated copy is hidden from it. */}
-            <h1 id="hero-heading" className="type-h1 mt-5 text-ivory">
+            <h1 data-hero-item id="hero-heading" className="type-h1 mt-5 text-ivory">
               <span className="sr-only">
                 Gold and diamond that outlive the occasion
               </span>
@@ -42,12 +44,12 @@ export function Hero() {
               </span>
             </h1>
 
-            <p className="type-body mt-6 text-ivory/75">
+            <p data-hero-item className="type-body mt-6 text-ivory/75">
               Hand-set 22K bridal and everyday pieces, hallmarked in our own
               atelier and made to pass down.
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+            <div data-hero-item className="mt-9 flex flex-wrap items-center gap-3">
               <Link
                 href="/catalogs/mehr"
                 className="type-button inline-flex items-center gap-2 bg-ivory px-7 py-3.5 text-ink transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
@@ -73,6 +75,7 @@ export function Hero() {
             it has to match the copy panel or the hero reads as two colours. */}
         <div className="relative min-h-[60vh] bg-lacquer lg:min-h-full">
           <div className="absolute inset-0 overflow-hidden lg:inset-6 lg:rounded-t-[14rem]">
+            <div data-hero-plate className="h-full w-full">
             <video
               className="h-full w-full object-cover"
               poster={POSTER}
@@ -98,6 +101,7 @@ export function Hero() {
                 className="object-cover"
               />
             </noscript>
+            </div>
           </div>
         </div>
       </div>
