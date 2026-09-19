@@ -10,7 +10,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 const MATERIALS = [
   { label: "Gold", gradient: "var(--material-gold)", solid: "#e8d9b0" },
   { label: "Diamond", gradient: "var(--material-diamond)", solid: "#eef4f8" },
-  { label: "Ruby", gradient: "var(--material-ruby)", solid: "#f0a8b4" },
+  { label: "Ruby", gradient: "var(--material-ruby)", solid: "#a31116" },
 ] as const;
 
 const INTERVAL = 2600;

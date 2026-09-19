@@ -1687,10 +1687,15 @@
 
 /* ==========================================================================
    Material gradients — the rotating hero word
-   One per material. These are only ever set on the lacquer hero, so each
-   is checked against #5c1f2a: gold 9.9:1, diamond 10.0:1, ruby 5.3:1 at
-   the darkest stop. A true ruby red would fail here, so the ruby ramp is
-   lifted to rose — it still reads as the stone against burgundy.
+
+   Gold and diamond are light ramps and clear large-text AA on the lacquer
+   hero (9.9:1 and ~10:1).
+
+   Ruby uses the house reds as specified: Best Red, Dark Auburn, Canadian
+   Cherry, Deep Berry. These are dark stones, and on the lacquer ground
+   (#5c1f2a) they measure ~1.6:1 — below the 3:1 large text needs. Kept as
+   specified; if it has to pass, the word needs a lighter ground behind it
+   rather than a different red.
    ========================================================================== */
 
 :root {
@@ -1700,17 +1705,26 @@
     #f0e4c4 48%,
     #e8d9b0 100%
   );
-  --material-diamond: linear-gradient(
-    100deg,
-    #dfe8ee 0%,
-    #ffffff 46%,
-    #e8f1f7 100%
+  /* Four-sided transition radiating from the centre — the sectors meet at
+     a point and read as the crown facets of a brilliant cut. `from 45deg`
+     puts the seams on the diagonals so the bright axis is upright. */
+  --material-diamond: conic-gradient(
+    from 45deg at 50% 50%,
+    #ffffff 0deg,
+    #cfdde6 60deg,
+    #f6fafd 120deg,
+    #d8e4ec 180deg,
+    #ffffff 240deg,
+    #cfdde6 300deg,
+    #ffffff 360deg
   );
+  /* Best Red → Dark Auburn → Canadian Cherry → Deep Berry */
   --material-ruby: linear-gradient(
     100deg,
-    #e88fa0 0%,
-    #ffd9df 48%,
-    #f0a8b4 100%
+    #a31116 0%,
+    #8f171b 34%,
+    #831419 67%,
+    #771318 100%
   );
 }
 
