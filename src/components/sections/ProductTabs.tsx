@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
+import { motion } from "motion/react";
+import { SNAP } from "@/components/motion/tokens";
 import { Accent } from "@/components/ui/Accent";
 import { Reveal } from "@/components/ui/Reveal";
-import { ArrowIcon } from "@/components/site/icons";
+import { ArrowLink } from "@/components/motion/MotionCta";
 import {
   ProductCard,
   ProductCardSkeleton,
@@ -76,29 +78,29 @@ export function ProductTabs({
                         cur === "bestsellers" ? "new" : "bestsellers"
                       );
                     }}
-                    className={`type-nav border-b pb-1.5 transition-colors duration-200 motion-reduce:transition-none ${
-                      selected
-                        ? "border-ink text-ink"
-                        : "border-transparent text-muted hover:text-ink"
+                    className={`type-nav relative pb-1.5 ${
+                      selected ? "text-ink" : "text-muted hover:text-ink"
                     }`}
                   >
                     {t.label}
+                    {/* The rule slides from one tab to the other rather
+                        than two borders swapping colour. */}
+                    {selected ? (
+                      <motion.span
+                        layoutId="product-tab-rule"
+                        transition={SNAP}
+                        className="absolute inset-x-0 -bottom-px h-px bg-ink"
+                      />
+                    ) : null}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          <Link
-            href={active.href}
-            className="type-nav group inline-flex shrink-0 items-center gap-2 text-gold-deep"
-          >
+          <ArrowLink href={active.href} className="shrink-0 text-gold-deep">
             View all
-            <ArrowIcon
-              size={14}
-              className="transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-            />
-          </Link>
+          </ArrowLink>
         </Reveal>
 
         <div

@@ -1,7 +1,9 @@
 "use client";
 
 import { useId, useState } from "react";
+import { motion } from "motion/react";
 import { Reveal } from "@/components/ui/Reveal";
+import { buttonLift, SNAP } from "@/components/motion/tokens";
 
 /**
  * Newsletter — one quiet row. The conversion ask is the consultation
@@ -57,12 +59,19 @@ export function Newsletter() {
                 placeholder="Enter your email"
                 className="w-full border border-border bg-ivory px-4 py-3 text-[0.9rem] text-ink placeholder:text-muted sm:w-72"
               />
-              <button
+              <motion.button
                 type="submit"
-                className="type-button shrink-0 bg-gold-deep px-7 py-3.5 text-ivory transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                initial="rest"
+                animate="rest"
+                whileHover="hover"
+                whileFocus="hover"
+                whileTap="tap"
+                variants={buttonLift}
+                transition={SNAP}
+                className="type-button shrink-0 bg-gold-deep px-7 py-3.5 text-ivory"
               >
                 Subscribe
-              </button>
+              </motion.button>
             </form>
           )}
         </Reveal>

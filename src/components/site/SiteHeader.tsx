@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { useCart } from "@/components/CartProvider";
 import { useWishlist } from "@/components/WishlistProvider";
 import { PRIMARY_NAV } from "@/data/navigation";
@@ -13,6 +15,8 @@ import {
   SearchIcon,
   WhatsAppIcon,
 } from "@/components/site/icons";
+
+gsap.registerPlugin(useGSAP);
 
 /**
  * Sticky header — centred wordmark, nav split around it, actions right.
@@ -63,6 +67,22 @@ export function SiteHeader({
     };
   }, [menuOpen]);
 
+  /* The seat/unseat is a GSAP tween on the backdrop rather than a CSS
+     colour transition, so the fade is interruptible mid-scroll instead of
+     restarting each time the boolean flips. */
+  const barRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.to("[data-header-backdrop]", {
+        autoAlpha: solid ? 1 : 0,
+        duration: 0.35,
+        ease: "power2.out",
+      });
+    },
+    { scope: barRef, dependencies: [solid] }
+  );
+
   const light = overlay && !solid;
   const left = PRIMARY_NAV.slice(0, 3);
   const right = PRIMARY_NAV.slice(3);
@@ -71,15 +91,17 @@ export function SiteHeader({
     /* Sticky, not fixed: a fixed header would sit on top of the
        announcement bar and hide it. The hero is pulled up under this with
        a negative margin so the transparent state has something to show. */
-    <header
-      className={`sticky top-0 z-50 transition-colors duration-300 motion-reduce:transition-none ${
-        solid
-          ? "border-b border-border bg-ivory/95 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent"
-      }`}
-    >
+    <header ref={barRef} className="sticky top-0 z-50">
+      {/* Separate layer so the ivory can fade without the bar's contents
+          inheriting the opacity. */}
       <div
-        className={`mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 ${
+        data-header-backdrop
+        aria-hidden
+        className="absolute inset-0 border-b border-border bg-ivory/95 backdrop-blur-md"
+        style={{ opacity: 0, visibility: "hidden" }}
+      />
+      <div
+        className={`relative mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 ${
           light ? "text-ivory" : "text-ink"
         }`}
       >

@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { motion } from "motion/react";
+import { GLIDE, plateZoom, SNAP } from "@/components/motion/tokens";
 import { Accent } from "@/components/ui/Accent";
 import { Reveal } from "@/components/ui/Reveal";
 import { CATEGORY_TILES, SEGMENTS, type Segment } from "@/data/mock";
@@ -41,11 +43,20 @@ export function CategoryGrid() {
                   type="button"
                   aria-selected={active}
                   onClick={() => setSegment(s.id)}
-                  className={`type-nav rounded-full px-4 py-2 transition-colors duration-200 motion-reduce:transition-none ${
-                    active ? "bg-ink text-ivory" : "text-muted hover:text-ink"
+                  className={`type-nav relative rounded-full px-4 py-2 ${
+                    active ? "text-ivory" : "text-muted hover:text-ink"
                   }`}
                 >
-                  {s.label}
+                  {/* Shared layout id: the pill slides between segments
+                      instead of one fading out while another fades in. */}
+                  {active ? (
+                    <motion.span
+                      layoutId="segment-pill"
+                      transition={SNAP}
+                      className="absolute inset-0 rounded-full bg-ink"
+                    />
+                  ) : null}
+                  <span className="relative">{s.label}</span>
                 </button>
               );
             })}
@@ -56,19 +67,26 @@ export function CategoryGrid() {
           {CATEGORY_TILES.map((tile, i) => (
             <li key={tile.label}>
               <Reveal delay={i * 60}>
+                <motion.div initial="rest" animate="rest" whileHover="hover">
                 <Link
                   href={tile.href[segment]}
-                  className="group block overflow-hidden bg-card"
+                  className="block overflow-hidden bg-card"
                 >
                   <div className="relative aspect-4/5 w-full overflow-hidden sm:aspect-square">
-                    <Image
-                      src={tile.image}
-                      alt={`${tile.label} — Kundan`}
-                      fill
-                      loading="lazy"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                    />
+                    <motion.div
+                      variants={plateZoom}
+                      transition={GLIDE}
+                      className="absolute inset-0"
+                    >
+                      <Image
+                        src={tile.image}
+                        alt={`${tile.label} — Kundan`}
+                        fill
+                        loading="lazy"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                    </motion.div>
                     {/* Keeps the label legible over any photograph. */}
                     <div
                       aria-hidden
@@ -79,6 +97,7 @@ export function CategoryGrid() {
                     </span>
                   </div>
                 </Link>
+                </motion.div>
               </Reveal>
             </li>
           ))}

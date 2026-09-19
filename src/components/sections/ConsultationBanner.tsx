@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { Accent } from "@/components/ui/Accent";
 import { Reveal } from "@/components/ui/Reveal";
-import { ArrowIcon, WhatsAppIcon } from "@/components/site/icons";
+import { WhatsAppIcon } from "@/components/site/icons";
+import { ArrowLink, MotionCta } from "@/components/motion/MotionCta";
 import {
   STORE_ADDRESS,
   STORE_HOURS,
@@ -34,21 +34,20 @@ export function ConsultationBanner() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
+              <MotionCta
                 href="/contact"
-                className="type-button inline-flex items-center gap-2 bg-gold-deep px-7 py-3.5 text-ivory transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                className="bg-gold-deep text-ivory"
               >
                 Book a consultation
-              </Link>
-              <a
+              </MotionCta>
+              <MotionCta
                 href={whatsappUrl(WHATSAPP_PRESETS.bridal)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="type-button group inline-flex items-center gap-2 rounded-full border border-ink/25 px-7 py-3.5 text-ink transition-colors duration-200 hover:border-ink motion-reduce:transition-none"
+                external
+                variant="outline"
+                icon={<WhatsAppIcon size={16} />}
               >
-                <WhatsAppIcon size={16} />
                 Chat on WhatsApp
-              </a>
+              </MotionCta>
             </div>
           </div>
 
@@ -69,18 +68,13 @@ export function ConsultationBanner() {
               ))}
             </dl>
 
-            <a
+            <ArrowLink
               href={STORE_ADDRESS.mapUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="type-nav group mt-6 inline-flex items-center gap-2 text-gold-deep"
+              external
+              className="mt-6 text-gold-deep"
             >
               Open in maps
-              <ArrowIcon
-                size={14}
-                className="transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-              />
-            </a>
+            </ArrowLink>
           </div>
         </Reveal>
       </div>

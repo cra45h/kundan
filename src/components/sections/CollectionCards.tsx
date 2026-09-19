@@ -1,9 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "motion/react";
 import { Accent } from "@/components/ui/Accent";
 import { Reveal } from "@/components/ui/Reveal";
 import { Parallax } from "@/components/ui/Parallax";
 import { ArrowIcon } from "@/components/site/icons";
+import { GLIDE, plateZoom } from "@/components/motion/tokens";
 import { COLLECTION_CARDS } from "@/data/mock";
 import { materialMeta } from "@/lib/products";
 
@@ -34,30 +38,41 @@ export function CollectionCards() {
           {COLLECTION_CARDS.map((c, i) => (
             <li key={c.slug}>
               <Reveal delay={i * 70}>
-                <Link href={c.href} className="group block">
-                  <div className="relative aspect-3/4 w-full overflow-hidden rounded-t-[10rem] bg-card">
-                    <Image
-                      src={c.image}
-                      alt={`${c.title} — ${c.subtitle}`}
-                      fill
-                      loading="lazy"
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                    />
-                  </div>
+                <motion.div initial="rest" animate="rest" whileHover="hover">
+                  <Link href={c.href} className="block">
+                    <div className="relative aspect-3/4 w-full overflow-hidden rounded-t-[10rem] bg-card">
+                      <motion.div
+                        variants={plateZoom}
+                        transition={GLIDE}
+                        className="absolute inset-0"
+                      >
+                        <Image
+                          src={c.image}
+                          alt={`${c.title} — ${c.subtitle}`}
+                          fill
+                          loading="lazy"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover"
+                        />
+                      </motion.div>
+                    </div>
 
-                  <h3 className="type-h3 mt-5">{c.title}</h3>
-                  <p className="mt-1.5 text-[0.85rem] leading-snug text-muted">
-                    {c.description}
-                  </p>
-                  <span className="type-nav mt-3 inline-flex items-center gap-2 text-gold-deep">
-                    Explore
-                    <ArrowIcon
-                      size={14}
-                      className="transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-                    />
-                  </span>
-                </Link>
+                    <h3 className="type-h3 mt-5">{c.title}</h3>
+                    <p className="mt-1.5 text-[0.85rem] leading-snug text-muted">
+                      {c.description}
+                    </p>
+                    <span className="type-nav mt-3 inline-flex items-center gap-2 text-gold-deep">
+                      Explore
+                      <motion.span
+                        variants={{ rest: { x: 0 }, hover: { x: 5 } }}
+                        transition={GLIDE}
+                        className="inline-flex"
+                      >
+                        <ArrowIcon size={14} />
+                      </motion.span>
+                    </span>
+                  </Link>
+                </motion.div>
               </Reveal>
             </li>
           ))}
@@ -66,9 +81,10 @@ export function CollectionCards() {
 
       {/* One campaign banner, full width */}
       <Reveal className="mt-14 md:mt-20">
+        <motion.div initial="rest" animate="rest" whileHover="hover">
         <Link
           href="/materials/gold"
-          className="on-dark group relative block min-h-[22rem] overflow-hidden md:min-h-[26rem]"
+          className="on-dark relative block min-h-[22rem] overflow-hidden md:min-h-[26rem]"
         >
           <Parallax amount={12} className="absolute inset-0">
             <div className="absolute inset-[-8%]">
@@ -98,14 +114,18 @@ export function CollectionCards() {
               <p className="type-body mt-4 text-ivory/75">{campaign.tagline}</p>
               <span className="type-nav mt-6 inline-flex items-center gap-2 text-gold-bright">
                 Discover the campaign
-                <ArrowIcon
-                  size={14}
-                  className="transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-                />
+                <motion.span
+                  variants={{ rest: { x: 0 }, hover: { x: 5 } }}
+                  transition={GLIDE}
+                  className="inline-flex"
+                >
+                  <ArrowIcon size={14} />
+                </motion.span>
               </span>
             </div>
           </div>
         </Link>
+        </motion.div>
       </Reveal>
     </section>
   );

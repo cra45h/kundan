@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { motion } from "motion/react";
+import { EASE, SNAP } from "@/components/motion/tokens";
 import { useCart } from "@/components/CartProvider";
 import { useWishlist } from "@/components/WishlistProvider";
 import { HeartIcon, PlusIcon } from "@/components/site/icons";
@@ -32,7 +34,14 @@ export function ProductCard({
   const alt = product.gallery?.find((g) => g && g !== product.image);
 
   return (
-    <article data-reveal className="group relative">
+    <motion.article
+      data-reveal
+      initial="rest"
+      animate="rest"
+      whileHover="hover"
+      whileFocus="hover"
+      className="group relative"
+    >
       <div className="relative aspect-4/5 w-full overflow-hidden bg-card">
         {/* No link here: the caption's stretched overlay already covers the
             plate, so wrapping the image too would put two links to the same
@@ -44,27 +53,37 @@ export function ProductCard({
             </span>
           ) : (
             <>
-              <Image
-                src={product.image}
-                alt=""
-                fill
-                priority={priority}
-                loading={priority ? undefined : "lazy"}
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                onError={() => setImgError(true)}
-                className={`object-cover transition-opacity duration-500 motion-reduce:transition-none ${
-                  alt ? "group-hover:opacity-0" : ""
-                }`}
-              />
-              {alt ? (
+              <motion.div
+                variants={alt ? { rest: { opacity: 1 }, hover: { opacity: 0 } } : undefined}
+                transition={EASE}
+                className="absolute inset-0"
+              >
                 <Image
-                  src={alt}
+                  src={product.image}
                   alt=""
                   fill
-                  loading="lazy"
+                  priority={priority}
+                  loading={priority ? undefined : "lazy"}
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 motion-reduce:transition-none"
+                  onError={() => setImgError(true)}
+                  className="object-cover"
                 />
+              </motion.div>
+              {alt ? (
+                <motion.div
+                  variants={{ rest: { opacity: 0 }, hover: { opacity: 1 } }}
+                  transition={EASE}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={alt}
+                    alt=""
+                    fill
+                    loading="lazy"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-cover"
+                  />
+                </motion.div>
               ) : null}
             </>
           )}
@@ -93,8 +112,13 @@ export function ProductCard({
           <HeartIcon size={15} filled={liked} />
         </button>
 
-        <button
+        <motion.button
           type="button"
+          variants={{
+            rest: { opacity: 0, y: 6 },
+            hover: { opacity: 1, y: 0 },
+          }}
+          transition={SNAP}
           onClick={() =>
             addItem({
               id: product.id,
@@ -107,11 +131,13 @@ export function ProductCard({
             })
           }
           aria-label={`Add ${product.name} to bag`}
-          className="type-nav absolute inset-x-2.5 bottom-2.5 z-10 inline-flex items-center justify-center gap-2 bg-ink py-3 text-ivory opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 motion-reduce:transition-none"
+          /* Touch has no hover to reveal it, so it is always on there and
+             the variants only take effect from md up. */
+          className="type-nav absolute inset-x-2.5 bottom-2.5 z-10 inline-flex items-center justify-center gap-2 bg-ink py-3 text-ivory max-md:!opacity-100 max-md:!transform-none"
         >
           <PlusIcon size={14} />
           Quick add
-        </button>
+        </motion.button>
       </div>
 
       <div className="mt-3">
@@ -131,18 +157,22 @@ export function ProductCard({
           {formatPrice(product.price)}
         </p>
       </div>
-    </article>
+    </motion.article>
   );
 }
 
 /** Matching skeleton — same box model, so swapping in costs no layout shift. */
 export function ProductCardSkeleton() {
   return (
-    <div aria-hidden className="animate-pulse">
+    <motion.div
+      aria-hidden
+      animate={{ opacity: [1, 0.55, 1] }}
+      transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+    >
       <div className="aspect-4/5 w-full bg-stone/50" />
       <div className="mt-3 h-2.5 w-3/4 bg-stone/50" />
       <div className="mt-2 h-2 w-1/2 bg-stone/40" />
       <div className="mt-2 h-2.5 w-1/3 bg-stone/50" />
-    </div>
+    </motion.div>
   );
 }

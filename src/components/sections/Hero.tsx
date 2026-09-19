@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowIcon } from "@/components/site/icons";
 import { MaterialRotator } from "@/components/sections/MaterialRotator";
+import { MotionCta } from "@/components/motion/MotionCta";
 
 const POSTER = "/hero/bridal-gold-poster.jpg";
 const VIDEO = "/hero/bridal-gold.mp4";
@@ -50,22 +50,17 @@ export function Hero() {
             </p>
 
             <div data-hero-item className="mt-9 flex flex-wrap items-center gap-3">
-              <Link
-                href="/catalogs/mehr"
-                className="type-button inline-flex items-center gap-2 bg-ivory px-7 py-3.5 text-ink transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-              >
+              <MotionCta href="/catalogs/mehr" variant="light">
                 Shop Bridal
-              </Link>
-              <Link
+              </MotionCta>
+              <MotionCta
                 href="/catalogs/rozana"
-                className="type-button group inline-flex items-center gap-2 rounded-full border border-ivory/45 px-7 py-3.5 text-ivory transition-colors duration-200 hover:border-ivory motion-reduce:transition-none"
+                variant="outline"
+                arrow
+                className="text-ivory"
               >
                 Shop Everyday
-                <ArrowIcon
-                  size={15}
-                  className="transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-                />
-              </Link>
+              </MotionCta>
             </div>
           </div>
         </div>
