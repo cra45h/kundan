@@ -1817,9 +1817,9 @@
   }
 }
 
-/* Without JavaScript nothing can dismiss the overlay, so it must not
-   exist. This is the one case where the page absolutely cannot be left
-   behind a fixed element. */
-.no-js-hidden {
-  display: none;
+/* Set by the pre-paint script in IntroLoader, before the overlay is ever
+   drawn. Deciding this after hydration meant a returning visitor watched a
+   static loading screen for the second or so before React caught up. */
+[data-intro="skip"] [data-intro-overlay] {
+  display: none !important;
 }

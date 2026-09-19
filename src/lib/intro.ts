@@ -12,7 +12,8 @@
  * hydration diffs and every sibling shifts.
  */
 
-const SEEN_KEY = "kundan-intro-shown";
+/** Shared with the pre-paint script in IntroLoader — keep them in sync. */
+export const INTRO_SEEN_KEY = "kundan-intro-shown";
 const DONE_EVENT = "kundan:intro-done";
 
 let finished = false;
@@ -26,7 +27,7 @@ export function shouldPlayIntro(): boolean {
   if (typeof window === "undefined") return false;
 
   try {
-    if (sessionStorage.getItem(SEEN_KEY) === "1") return false;
+    if (sessionStorage.getItem(INTRO_SEEN_KEY) === "1") return false;
   } catch {
     // Blocked storage — treat as a first visit.
   }
@@ -39,7 +40,7 @@ export function finishIntro() {
   if (finished) return;
   finished = true;
   try {
-    sessionStorage.setItem(SEEN_KEY, "1");
+    sessionStorage.setItem(INTRO_SEEN_KEY, "1");
   } catch {
     // Nothing to do; the intro simply plays again next load.
   }
@@ -71,3 +72,19 @@ export function onIntroDone(cb: () => void): () => void {
     window.removeEventListener(DONE_EVENT, handler);
   };
 }
+
+/**
+ * Runs while the HTML is still parsing, before the overlay paints.
+ *
+ * Injected once in the root layout rather than from the loader component:
+ * a <script> rendered inside the tree trips React's hydration attribute
+ * check. Marking <html suppressHydrationWarning> covers the attribute this
+ * sets, which is the same arrangement theme scripts use.
+ *
+ * Sets nothing on a first visit, so the overlay paints and plays.
+ */
+export const INTRO_PRE_PAINT = `(function(){try{
+var seen=sessionStorage.getItem('${INTRO_SEEN_KEY}')==='1';
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(seen||reduce)document.documentElement.setAttribute('data-intro','skip');
+}catch(e){}})();`;

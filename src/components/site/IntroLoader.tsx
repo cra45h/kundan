@@ -12,31 +12,40 @@ const WORD = "KUNDAN";
 /**
  * Loading screen — the wordmark fills gold-into-diamond, then lifts away.
  *
- * The markup is unconditional. Whether the intro *plays* is decided in the
- * layout effect below, never in render: returning `null` for a repeat
- * visitor while the server had rendered the overlay is a hydration
- * mismatch, and because this sits above the rest of the page every sibling
- * shifts up when React regenerates the tree.
+ * The lacquer ground paints immediately, but the wordmark starts invisible
+ * and is faded in by GSAP. That is deliberate: the fill cannot begin until
+ * hydration, and showing a fully unfilled word in the meantime made the
+ * animation look frozen rather than pending. A plain colour hold reads as
+ * intent; a stalled animation reads as a bug.
  *
- * Skipping happens in a layout effect, so the overlay is removed before
- * the browser paints and a returning visitor sees no flash of it.
+ * Render is unconditional — returning null where the server rendered the
+ * overlay is a hydration mismatch that shifts every sibling up.
  *
- * Safety, in order of how badly each would fail:
- *  - No JavaScript: a <noscript> rule removes the overlay outright. It is
- *    fixed and full-screen, so leaving it would hide the site.
- *  - JS present but this component throws before its timeline: the hero's
- *    4s backstop in onIntroDone releases it anyway.
- *  - Scroll lock is undone in cleanup, not only on completion, so an
- *    interrupted navigation cannot leave the page frozen.
+ * Safety, worst failure first:
+ *  - No JavaScript: a <noscript> rule removes the overlay. It is fixed and
+ *    full-screen, so leaving it would hide the site entirely.
+ *  - GSAP present but the timeline throws: a 6s sweep hides the overlay.
+ *  - The hero additionally releases itself after 4s via onIntroDone.
+ *  - Scroll lock is undone in cleanup, not only on completion.
  */
 export function IntroLoader() {
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
+      const el = root.current;
+      if (!el) return;
+
+      // Last-resort release, armed before anything can throw.
+      const sweep = window.setTimeout(() => {
+        gsap.set(el, { display: "none" });
+        document.documentElement.style.overflow = "";
+        finishIntro();
+      }, 6000);
+
       if (!shouldPlayIntro()) {
-        // Repeat visit or reduced motion — take it out before first paint.
-        gsap.set(root.current, { display: "none" });
+        gsap.set(el, { display: "none" });
+        window.clearTimeout(sweep);
         finishIntro();
         return;
       }
@@ -47,20 +56,32 @@ export function IntroLoader() {
 
       const tl = gsap.timeline({
         onComplete: () => {
+          window.clearTimeout(sweep);
           scroller.style.overflow = prevOverflow;
           finishIntro();
         },
       });
 
-      tl.to("[data-loader-fill]", {
-        clipPath: "inset(0% 0 0 0)",
-        duration: 1.15,
-        ease: "power2.inOut",
-      })
+      tl
+        // Word arrives first, so the fill is seen starting from empty.
+        .to("[data-loader-word]", {
+          opacity: 1,
+          duration: 0.4,
+          ease: "power2.out",
+        })
+        .to(
+          "[data-loader-fill]",
+          {
+            clipPath: "inset(0% 0 0 0)",
+            duration: 1.15,
+            ease: "power2.inOut",
+          },
+          ">-0.1"
+        )
         .to(
           "[data-loader-word]",
-          { letterSpacing: "0.12em", duration: 0.9, ease: "power2.out" },
-          0
+          { letterSpacing: "0.12em", duration: 1.05, ease: "power2.out" },
+          "<"
         )
         .to("[data-loader-word]", {
           y: -14,
@@ -69,19 +90,20 @@ export function IntroLoader() {
           ease: "power2.in",
         })
         .to(
-          root.current,
+          el,
           {
             yPercent: -100,
             duration: 0.7,
             ease: "power3.inOut",
             onComplete: () => {
-              gsap.set(root.current, { display: "none" });
+              gsap.set(el, { display: "none" });
             },
           },
           "-=0.2"
         );
 
       return () => {
+        window.clearTimeout(sweep);
         scroller.style.overflow = prevOverflow;
         tl.kill();
       };
@@ -102,7 +124,9 @@ export function IntroLoader() {
         aria-hidden
         className="fixed inset-0 z-200 flex items-center justify-center bg-lacquer"
       >
-        <div data-loader-word className="relative">
+        {/* opacity-0 in markup: GSAP fades this in when it can actually
+            drive the fill. See the note above. */}
+        <div data-loader-word className="relative opacity-0">
           {/* Dim base — the shape the fill travels through. */}
           <span className="loader-word block text-ivory/25">{WORD}</span>
 

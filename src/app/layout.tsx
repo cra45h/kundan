@@ -5,6 +5,7 @@ import { WishlistProvider } from "@/components/WishlistProvider";
 import { CartDrawer } from "@/components/CartDrawer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { RouteScrollCleanup } from "@/components/RouteScrollCleanup";
+import { INTRO_PRE_PAINT } from "@/lib/intro";
 import "./globals.css";
 
 /**
@@ -54,8 +55,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      /* The pre-paint script below sets data-intro on this element. */
+      suppressHydrationWarning
       className={`${instrumentSerif.variable} ${inter.variable}`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: INTRO_PRE_PAINT }} />
+      </head>
       <body className="min-h-screen bg-paper antialiased">
         <CartProvider>
           <WishlistProvider>
