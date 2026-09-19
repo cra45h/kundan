@@ -1,56 +1,92 @@
 @import "tailwindcss";
 
 /*
- * Kundan maison — celestial gallery palette.
- * Warm cream paper, tonal ghost headings, greige bands, warm ink.
- * Type: Playfair Display (fashion serif) + Inter (grotesque body).
+ * Kundan — design tokens and typography.
  *
- * Motion policy: no CSS @keyframes and no transition-driven motion.
- * Every animation in this project is authored in GSAP or Framer Motion
- * so timelines stay scrubbable, interruptible, and reduced-motion aware.
+ * Palette: warm ivory for product browsing, near-black for storytelling,
+ * lacquer (#5c1f2a) as the house colour, antique gold as the accent.
+ *
+ * Type: Instrument Serif (display, 400 + italic only) + Inter (body/UI).
+ * Instrument Serif has no bold — emphasis is size and italic, never weight.
+ * `font-synthesis: none` is set globally so no browser fakes one.
  */
 
 @theme {
-  /* Surfaces — warm cream gallery, no pure white anywhere. */
-  --color-paper: #f4efe2;
-  --color-ivory: #fbf8f0;
-  --color-card: #faf6ec;
-  --color-chalk: #faf6ec;
+  /* ── Grounds ───────────────────────────────────────────────
+     Warm ivory for product browsing, near-black for storytelling. */
+  --color-paper: #ebe6dc;
+  --color-ivory: #f4f1eb;
+  --color-card: #f7f4ee;
+  --color-chalk: #f7f4ee;
+  --color-stone: #d8d2c6;
+  --color-border: #d9d3c8;
+  --color-platinum: #c5c0b6;
 
-  /* Tonal heading wash — the oversized display type sits on the page
-     as a slightly deeper cream, never as solid ink. */
-  --color-ghost: #e4dcc7;
-  --color-ghost-deep: #d8cfb6;
+  /* ── Ink ───────────────────────────────────────────────────
+     Near-black, never pure #000. */
+  --color-ink: #12151c;
+  --color-muted: #6e6960;
+  --color-void: #07090e;
+  --color-brown: #1c1814;
 
-  /* Structural greiges — category band and footer mast. */
-  --color-sand: #c8c1b1;
-  --color-taupe: #948d7e;
-  --color-taupe-deep: #7f7869;
-
-  /* Ink */
-  --color-ink: #1b1915;
-  --color-void: #1b1915;
-  --color-brown: #221f19;
-  --color-muted: #7a7367;
-  --color-border: #ded6c3;
-  --color-stone: #cfc7b5;
-  --color-platinum: #c3bcac;
-
-  /* Accent — used as hairlines and marks, never as fill. */
-  --color-gold: #b09a68;
-  --color-gold-bright: #c8b484;
+  /* ── Brand ─────────────────────────────────────────────────
+     Lacquer is the house colour: hero panel and CTA banner. */
   --color-lacquer: #5c1f2a;
+  --color-lacquer-deep: #47161f;
 
-  --font-display: var(--font-display-serif), "Playfair Display", "Didot",
-    "Times New Roman", serif;
-  --font-body: var(--font-body-sans), Inter, system-ui, sans-serif;
+  /* ── Gold ──────────────────────────────────────────────────
+     `gold` is the identity accent, correct for rules, marks and
+     gold-on-dark text. It is NOT usable as text on ivory: against
+     --color-paper it measures 1.93:1, well under the 3:1 that large
+     text needs. `gold-deep` is the on-light text gold at 3.9:1. */
+  --color-gold: #bfa46a;
+  --color-gold-bright: #d4bc82;
+  --color-gold-pale: #e8d9b0;
+  --color-gold-deep: #8a6d35;
 
-  --shadow-soft: 0 10px 28px rgba(27, 25, 21, 0.05);
-  --shadow-lift: 0 18px 40px rgba(27, 25, 21, 0.09);
-  --shadow-gold: 0 8px 24px rgba(176, 154, 104, 0.2);
+  /* ── Type ──────────────────────────────────────────────────
+     Exactly two tokens. Swap a typeface by editing these two lines
+     plus the next/font call in app/layout.tsx — nothing else.
+
+     Urdu, later: because every rule reads these vars rather than a
+     family name, adding Nastaliq is a scoped override and touches no
+     component. Do not load the font until it is actually needed:
+
+       [lang="ur"] {
+         --font-display: "Noto Nastaliq Urdu", var(--font-display-src), serif;
+         --font-body: "Noto Nastaliq Urdu", system-ui, sans-serif;
+       }
+  */
+  --font-display: var(--font-display-src), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-body-src), system-ui, sans-serif;
+
+  --shadow-soft: 0 10px 28px rgba(7, 9, 14, 0.06);
+  --shadow-lift: 0 18px 40px rgba(7, 9, 14, 0.1);
+  --shadow-gold: 0 8px 24px rgba(191, 164, 106, 0.22);
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Gold gradients for the one italic accent word per heading.
+   Two of them, because a single gradient cannot clear 3:1 on both a
+   near-white and a near-black ground. Every stop in each is checked
+   against its intended background. */
+:root {
+  /* On ivory / paper: darkest→lightest stop all ≥ 3.3:1 on #ebe6dc. */
+  --gold-gradient: linear-gradient(
+    100deg,
+    #7d6230 0%,
+    #96793a 48%,
+    #86692f 100%
+  );
+  /* On void / lacquer: 10.7:1 on #07090e. */
+  --gold-gradient-on-dark: linear-gradient(
+    100deg,
+    #d4bc82 0%,
+    #f0e4c4 48%,
+    #e8d9b0 100%
+  );
 }
 
 @layer base {
@@ -76,26 +112,42 @@
     overflow: hidden;
   }
 
+  /* No browser-synthesised bold or italic anywhere. Instrument Serif has
+     a real italic and no bold at all; letting the browser fake either one
+     produces smeared, off-weight display type. */
+  html {
+    font-synthesis: none;
+  }
+
   body {
     background-color: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-body);
     font-weight: 400;
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 1rem;
+    line-height: 1.65;
     letter-spacing: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
-    font-optical-sizing: auto;
   }
 
+  /* Display type: 400 only, tight tracking, balanced wrapping.
+     Sizes come from the .type-* scale in the utilities layer. */
   h1,
   h2,
   h3,
   h4 {
     font-family: var(--font-display);
     font-weight: 400;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    text-wrap: balance;
+    color: var(--color-ink);
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   ::selection {
@@ -247,14 +299,12 @@
     font-size: clamp(2.75rem, 8vw, 5.5rem);
     line-height: 1.05;
     letter-spacing: -0.025em;
-    font-optical-sizing: auto;
   }
 
   .type-headline {
     font-size: clamp(2rem, 4.5vw, 3.25rem);
     line-height: 1.08;
     letter-spacing: -0.02em;
-    font-optical-sizing: auto;
   }
 
   .type-subhead {
@@ -1305,7 +1355,6 @@
     font-size: clamp(3.25rem, 15.5vw, 15rem);
     line-height: 0.82;
     letter-spacing: 0.005em;
-    font-optical-sizing: auto;
     text-transform: uppercase;
   }
 
@@ -1318,7 +1367,6 @@
     letter-spacing: 0.01em;
     text-transform: uppercase;
     color: var(--color-ghost);
-    font-optical-sizing: auto;
   }
 
   .type-ghost-deep {
@@ -1411,6 +1459,198 @@
   @media (min-width: 1024px) {
     .section-celeste {
       padding-block: 9rem;
+    }
+  }
+}
+
+/* ==========================================================================
+   Typography scale
+   Display sizes are fluid via clamp(). Display type is never set below
+   24px and never above weight 400 — see the base layer for why.
+   ========================================================================== */
+
+@layer utilities {
+  /* ── Display scale ─────────────────────────────────────── */
+
+  /* Signature title — "Explore our Collections", "Visit our stores" */
+  .type-signature {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .type-h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.75rem, 7vw, 6rem);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .type-h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  /* Card / collection title — the smallest display size we allow. */
+  .type-h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.75rem;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .type-quote {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  /* Newsletter title — the whole line is italic, not just one word. */
+  .type-newsletter {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  /* ── Body / UI scale (Inter) ───────────────────────────── */
+
+  .type-body {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+    /* Keeps measure near 70 characters without a magic pixel width. */
+    max-width: 68ch;
+  }
+
+  .type-announce {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .type-nav {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Product caption — name above, price beneath, lining up in a grid. */
+  .type-caption {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.6875rem;
+    line-height: 1.5;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .type-price {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    /* PKR figures sit in a column — keep the digits on a fixed advance. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .type-button {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+
+  .type-attrib-name {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .type-attrib-role {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--color-muted);
+  }
+
+  /* ── Accent word ───────────────────────────────────────────
+     Exactly one per heading. Solid gold-deep is the declared colour;
+     the gradient only replaces it where background-clip:text works,
+     so a browser without support still renders a readable word rather
+     than a transparent hole. */
+  .accent {
+    font-style: italic;
+    color: var(--color-gold-deep);
+  }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .accent {
+      background-image: var(--gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      /* Italic serif overhangs its box; without this the final stroke
+         of the word gets clipped by the gradient box. */
+      padding-inline-end: 0.08em;
+      margin-inline-end: -0.08em;
+    }
+  }
+
+  /* On void / lacquer grounds, swap to the light gradient. */
+  .on-dark .accent,
+  .accent-on-dark {
+    color: var(--color-gold-bright);
+  }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .on-dark .accent,
+    .accent-on-dark {
+      background-image: var(--gold-gradient-on-dark);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+  }
+
+  /* Windows high-contrast / forced colours: drop the clip entirely so the
+     word inherits the forced palette instead of vanishing. */
+  @media (forced-colors: active) {
+    .accent,
+    .on-dark .accent,
+    .accent-on-dark {
+      background-image: none;
+      color: currentColor;
+      -webkit-text-fill-color: currentColor;
     }
   }
 }

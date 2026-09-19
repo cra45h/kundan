@@ -1,426 +1,165 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { brand, collections } from "@/lib/data";
-import { BrandLogo } from "@/components/BrandLogo";
-import { CATALOGS, catalogMeta } from "@/lib/catalogs";
+import {
+  FOOTER_CARE,
+  FOOTER_COLLECTIONS,
+  FOOTER_COMMITMENTS,
+  FOOTER_LEGAL,
+  FOOTER_MATERIALS,
+  FOOTER_SHOP,
+  type NavLink,
+} from "@/data/navigation";
+import { CONTACT, SOCIAL, STORE_ADDRESS, STORE_HOURS } from "@/config/site";
 
-const MATERIALS = [
-  { label: "Gold", href: "/materials/gold" },
-  { label: "Diamond", href: "/materials/diamond" },
-  { label: "Ruby", href: "/materials/ruby" },
-] as const;
+/** Payment marks are wordmarks, not logos — no third-party brand assets. */
+const PAYMENTS = ["Visa", "Mastercard", "Easypaisa", "JazzCash", "Bank transfer"];
 
-const EDIT = [
-  { label: "New Arrivals", href: "/collections/new-arrivals" },
-  { label: "Best Sellers", href: "/collections/best-sellers" },
-  { label: "Signature", href: "/collections/signature" },
-] as const;
-
-const CLIENT_CARE = [
-  { label: "Book a viewing", href: "/contact" },
-  { label: "The atelier", href: "/atelier" },
-  { label: "Shipping & delivery", href: "/legal/shipping" },
-  { label: "Returns & exchanges", href: "/legal/returns" },
-  { label: "Lifetime warranty", href: "/legal/warranty" },
-] as const;
-
-const LEGAL = [
-  { label: "Terms & conditions", href: "/legal/terms" },
-  { label: "Privacy policy", href: "/legal/privacy" },
-  { label: "Shipping policy", href: "/legal/shipping" },
-  { label: "Returns policy", href: "/legal/returns" },
-  { label: "Warranty", href: "/legal/warranty" },
-] as const;
-
-const SOCIALS = [
-  {
-    label: "Instagram",
-    href: "https://www.instagram.com/kundan.atelier/",
-    external: true,
-    Icon: InstagramIcon,
-  },
-  {
-    label: "Facebook",
-    href: "https://www.facebook.com/kundan.atelier",
-    external: true,
-    Icon: FacebookIcon,
-  },
-  {
-    label: "WhatsApp",
-    href: "https://wa.me/9242111000000",
-    external: true,
-    Icon: WhatsAppIcon,
-  },
-  {
-    label: "Pinterest",
-    href: "https://www.pinterest.com/kundanatelier/",
-    external: true,
-    Icon: PinterestIcon,
-  },
-  {
-    label: "Email",
-    href: "mailto:hello@kundan.atelier",
-    external: false,
-    Icon: EmailIcon,
-  },
-] as const;
-
-function SocialSvg({ children }: { children: ReactNode }) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden
-      className="shrink-0"
-    >
-      {children}
-    </svg>
-  );
-}
-
-function InstagramIcon() {
-  return (
-    <SocialSvg>
-      <rect
-        x="3"
-        y="3"
-        width="18"
-        height="18"
-        rx="5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
-    </SocialSvg>
-  );
-}
-
-function FacebookIcon() {
-  return (
-    <SocialSvg>
-      <path
-        d="M14 9h3V6h-3c-1.7 0-3 1.3-3 3v2H9v3h2v7h3v-7h2.2l.8-3H14V9z"
-        fill="currentColor"
-      />
-    </SocialSvg>
-  );
-}
-
-function WhatsAppIcon() {
-  return (
-    <SocialSvg>
-      <path
-        d="M12 3.2c-4.8 0-8.8 3.9-8.8 8.8 0 1.5.4 3 1.1 4.3L3 21l4.9-1.3c1.2.7 2.6 1 4.1 1 4.8 0 8.8-3.9 8.8-8.8S16.8 3.2 12 3.2zm0 16c-1.4 0-2.7-.4-3.8-1l-.3-.2-2.9.8.8-2.8-.2-.3c-.7-1.2-1.1-2.5-1.1-3.9 0-4 3.2-7.2 7.2-7.2s7.2 3.2 7.2 7.2-3.2 7.2-7.2 7.2zm4-5.4c-.2-.1-1.3-.6-1.5-.7-.2-.1-.4-.1-.5.1-.2.2-.6.7-.7.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.3-.4.1-.2 0-.3 0-.4 0-.1-.5-1.3-.7-1.7-.2-.5-.4-.4-.5-.4h-.4c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.5 3.9 3.4.5.2 1 .4 1.3.5.6.2 1.1.2 1.5.1.5-.1 1.3-.5 1.5-1 .2-.5.2-.9.1-1 0-.1-.2-.2-.4-.3z"
-        fill="currentColor"
-      />
-    </SocialSvg>
-  );
-}
-
-function PinterestIcon() {
-  return (
-    <SocialSvg>
-      <path
-        d="M12 3.2c-4.9 0-8.8 3.9-8.8 8.8 0 3.6 2.2 6.7 5.4 8-.1-.7-.1-1.7.1-2.5.2-.8 1.3-5.5 1.3-5.5s-.3-.7-.3-1.6c0-1.5.9-2.6 2-2.6.9 0 1.4.7 1.4 1.5 0 .9-.6 2.3-.9 3.5-.3 1.1.5 1.9 1.6 1.9 1.9 0 3.2-2.4 3.2-5.3 0-2.2-1.5-3.8-4.2-3.8-3.1 0-5 2.3-5 4.8 0 .9.3 1.5.7 2 .1.1.1.2.1.3l-.3 1c0 .2-.2.2-.3.1-1.3-.5-1.9-2-1.9-3.6 0-2.7 2.3-5.9 6.7-5.9 3.6 0 6 2.6 6 5.4 0 3.7-2.1 6.5-5.1 6.5-1 0-2-.6-2.3-1.2l-.6 2.4c-.2.8-.8 1.8-1.2 2.4 1 .3 2 .5 3.1.5 4.9 0 8.8-3.9 8.8-8.8S16.9 3.2 12 3.2z"
-        fill="currentColor"
-      />
-    </SocialSvg>
-  );
-}
-
-function EmailIcon() {
-  return (
-    <SocialSvg>
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="14"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M4 7l8 6 8-6"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </SocialSvg>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <SocialSvg>
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="16"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M8 3v4M16 3v4M3 10h18"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </SocialSvg>
-  );
-}
-
-function FootCol({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <div>
-      <p className="font-display text-[1.05rem] tracking-[0.02em] text-ink">
-        {title}
-      </p>
-      <ul className="mt-4 space-y-2.5">{children}</ul>
-    </div>
-  );
-}
-
-function FootLink({
-  href,
-  children,
-  external,
-}: {
-  href: string;
-  children: React.ReactNode;
-  external?: boolean;
-}) {
-  const className =
-    "text-[13px] leading-snug text-muted transition-colors hover:text-gold";
-  if (external) {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={className}
-      >
-        {children}
-      </a>
-    );
-  }
-  return (
-    <Link href={href} className={className}>
-      {children}
-    </Link>
-  );
-}
-
-/**
- * Maison footer — navigation, salon details, client care, and legal.
- */
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer
-      className="foot-mast border-t border-border bg-white text-ink"
-      aria-labelledby="footer-heading"
-    >
+    <footer className="bg-void text-ivory" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
 
-      <div className="container-maison px-6 pt-16 pb-10 sm:px-10 md:pt-20 md:pb-12 lg:px-14">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
+      <div className="mx-auto max-w-[1280px] px-4 pt-16 pb-10 sm:px-6 lg:px-8">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+          {/* Identity + salon */}
           <div className="lg:col-span-4">
-            <Link href="/" className="inline-flex" aria-label={brand.name}>
-              <BrandLogo size="mark" className="h-10 w-auto" />
+            <Link
+              href="/"
+              className="font-display text-[1.35rem] tracking-[0.3em] uppercase"
+            >
+              Kundan
             </Link>
-            <p className="mt-5 font-display text-[1.65rem] leading-[1.15] tracking-[0.02em] text-ink md:text-[1.85rem]">
-              {brand.tagline}
-            </p>
-            <p className="mt-4 max-w-sm text-[13px] leading-relaxed text-muted">
-              {brand.fullName} — bridal, high jewellery, and everyday gold from
-              the Lahore atelier. Private viewings by appointment; walk-ins
-              welcome during salon hours.
-            </p>
-
-            <div className="mt-8 space-y-3 text-[13px] leading-relaxed text-muted">
-              <p>
-                <span className="text-ink">Salon</span>
-                <br />
-                MM Alam Road, Lahore, Pakistan
-              </p>
-              <p>
-                <span className="text-ink">Hours</span>
-                <br />
-                Tue–Sun · 11:00 – 19:00
-                <br />
-                Closed Mondays
-              </p>
-              <p>
-                <span className="text-ink">Contact</span>
-                <br />
-                <a
-                  href="mailto:hello@kundan.atelier"
-                  className="transition-colors hover:text-gold"
-                >
-                  hello@kundan.atelier
-                </a>
-                <br />
-                <a
-                  href="tel:+9242111000000"
-                  className="transition-colors hover:text-gold"
-                >
-                  +92 42 111 000 000
-                </a>
-              </p>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              {SOCIALS.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  target={item.external ? "_blank" : undefined}
-                  rel={item.external ? "noopener noreferrer" : undefined}
-                  aria-label={item.label}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted transition-colors hover:border-gold hover:text-gold"
-                >
-                  <item.Icon />
-                </a>
+            <address className="type-body mt-5 text-ivory/70 not-italic">
+              {STORE_ADDRESS.line1}
+              <br />
+              {STORE_ADDRESS.city}, {STORE_ADDRESS.country}
+            </address>
+            <dl className="mt-4 space-y-1">
+              {STORE_HOURS.map((row) => (
+                <div key={row.days} className="flex gap-2 text-[0.8rem]">
+                  <dt className="text-ivory/60">{row.days}</dt>
+                  <dd className="text-ivory/85">{row.hours}</dd>
+                </div>
               ))}
-              <Link
-                href="/contact"
-                aria-label="Appointments"
-                className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-4 text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:border-gold hover:text-gold"
+            </dl>
+            <div className="mt-4 space-y-1 text-[0.8rem]">
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="block text-ivory/70 hover:text-ivory"
               >
-                <CalendarIcon />
-                Book
-              </Link>
+                {CONTACT.email}
+              </a>
+              <a
+                href={`tel:${CONTACT.phone.replace(/\s/g, "")}`}
+                className="block text-ivory/70 hover:text-ivory"
+              >
+                {CONTACT.phone}
+              </a>
             </div>
           </div>
 
-          <div className="grid gap-10 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-4 lg:gap-8">
-            <FootCol title="Houses">
-              {CATALOGS.map((slug) => (
-                <li key={slug}>
-                  <FootLink href={`/catalogs/${slug}`}>
-                    {catalogMeta[slug].title}
-                    <span className="mt-0.5 block text-[11px] text-muted/80 normal-case tracking-normal">
-                      {catalogMeta[slug].subtitle}
-                    </span>
-                  </FootLink>
-                </li>
-              ))}
-            </FootCol>
-
-            <FootCol title="Materials">
-              {MATERIALS.map((item) => (
-                <li key={item.href}>
-                  <FootLink href={item.href}>{item.label}</FootLink>
-                </li>
-              ))}
-              <li>
-                <FootLink href="/collections/rings">Shop by form</FootLink>
-              </li>
-            </FootCol>
-
-            <FootCol title="Collections">
-              {collections.map((item) => (
-                <li key={item.href}>
-                  <FootLink href={item.href}>{item.title}</FootLink>
-                </li>
-              ))}
-              {EDIT.map((item) => (
-                <li key={item.href}>
-                  <FootLink href={item.href}>{item.label}</FootLink>
-                </li>
-              ))}
-            </FootCol>
-
-            <FootCol title="Client care">
-              {CLIENT_CARE.map((item) => (
-                <li key={item.href}>
-                  <FootLink href={item.href}>{item.label}</FootLink>
-                </li>
-              ))}
-            </FootCol>
-          </div>
+          <FootCol title="Shop" links={FOOTER_SHOP} />
+          <FootCol title="Materials" links={FOOTER_MATERIALS} />
+          <FootCol title="Collections" links={FOOTER_COLLECTIONS} />
+          <FootCol title="Client Care" links={FOOTER_CARE} />
         </div>
 
-        <div className="mt-14 grid gap-8 border-t border-border pt-10 md:grid-cols-2 md:gap-12 lg:grid-cols-3">
-          <div>
-            <p className="font-display text-[1.05rem] tracking-[0.02em] text-ink">
-              Assurances
-            </p>
-            <ul className="mt-4 space-y-2 text-[13px] leading-relaxed text-muted">
-              <li>Handcrafted pieces by master artisans</li>
-              <li>GIA-verified diamonds of exceptional cut</li>
-              <li>Insured complimentary shipping across Pakistan</li>
-              <li>Lifetime warranty on craftsmanship</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-display text-[1.05rem] tracking-[0.02em] text-ink">
-              Payments &amp; security
-            </p>
-            <p className="mt-4 text-[13px] leading-relaxed text-muted">
-              Bank transfer, card, and in-salon settlement accepted. Online
-              orders are confirmed by the atelier before dispatch. Never share
-              card details over email or social messages — we will only request
-              payment through secured channels.
-            </p>
-          </div>
-          <div>
-            <p className="font-display text-[1.05rem] tracking-[0.02em] text-ink">
-              Bridal &amp; bespoke
-            </p>
-            <p className="mt-4 text-[13px] leading-relaxed text-muted">
-              Mehr bridal sets and bespoke commissions begin with a private
-              consultation. Allow lead time for sketch, crafting, and final
-              polish — especially for wedding calendars.
-            </p>
+        {/* Commitments strip */}
+        <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-ivory/15 pt-6">
+          {FOOTER_COMMITMENTS.map((item) => (
             <Link
-              href="/contact"
-              className="mt-4 inline-flex text-[12px] font-medium tracking-[0.14em] text-gold uppercase transition-colors hover:text-ink"
+              key={item.label}
+              href={item.href}
+              className="type-nav text-ivory/70 hover:text-ivory"
             >
-              Request a consultation
+              {item.label}
             </Link>
-          </div>
+          ))}
+        </div>
+
+        {/* Payments + social */}
+        <div className="mt-6 flex flex-col gap-5 border-t border-ivory/15 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <ul className="flex flex-wrap items-center gap-2">
+            {PAYMENTS.map((p) => (
+              <li
+                key={p}
+                className="rounded-sm border border-ivory/25 px-2.5 py-1 text-[0.65rem] tracking-[0.08em] text-ivory/70 uppercase"
+              >
+                {p}
+              </li>
+            ))}
+          </ul>
+
+          <ul className="flex items-center gap-4">
+            <li>
+              <a
+                href={SOCIAL.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="type-nav text-ivory/70 hover:text-ivory"
+              >
+                Instagram
+              </a>
+            </li>
+            <li>
+              <a
+                href={SOCIAL.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="type-nav text-ivory/70 hover:text-ivory"
+              >
+                Facebook
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
 
-      <div className="border-t border-border bg-paper/60">
-        <div className="container-maison flex flex-col gap-5 px-6 py-6 sm:px-10 md:flex-row md:items-center md:justify-between lg:px-14">
-          <p className="text-[12px] leading-relaxed text-muted">
-            © {year} {brand.fullName}. All rights reserved. Jewellery
-            photography and designs are protected.
+      <div className="border-t border-ivory/15">
+        <div className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 py-5 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+          <p className="text-[0.75rem] text-ivory/55">
+            © {year} Kundan Gems and Jewellers. All rights reserved.
           </p>
-          <nav
-            aria-label="Legal"
-            className="flex flex-wrap gap-x-5 gap-y-2 text-[11px] tracking-[0.06em] text-muted"
-          >
-            {LEGAL.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="transition-colors hover:text-gold"
-              >
-                {item.label}
-              </Link>
-            ))}
+          <nav aria-label="Legal">
+            <ul className="flex flex-wrap gap-x-5 gap-y-2">
+              {FOOTER_LEGAL.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-[0.75rem] text-ivory/55 hover:text-ivory"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </nav>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FootCol({ title, links }: { title: string; links: NavLink[] }) {
+  return (
+    <div className="lg:col-span-2">
+      <h3 className="type-nav text-ivory/55">{title}</h3>
+      <ul className="mt-4 space-y-2.5">
+        {links.map((item) => (
+          <li key={`${title}-${item.label}`}>
+            <Link
+              href={item.href}
+              className="text-[0.85rem] text-ivory/80 hover:text-ivory"
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

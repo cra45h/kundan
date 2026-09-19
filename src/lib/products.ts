@@ -160,10 +160,18 @@ export function isCategory(value: string): value is Category {
   return (CATEGORIES as readonly string[]).includes(value);
 }
 
+/**
+ * Prices render in PKR for the Pakistani market.
+ *
+ * TODO(kundan): the stored figures are still on the old USD scale (a
+ * bridal set reads as ₨4,280). The format is correct; the numbers are
+ * not. They need re-basing in Supabase before launch — converting them
+ * here would invent pricing.
+ */
 export function formatPrice(amount: number) {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-PK", {
     style: "currency",
-    currency: "USD",
+    currency: "PKR",
     maximumFractionDigits: 0,
   }).format(amount);
 }

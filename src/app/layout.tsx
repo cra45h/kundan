@@ -1,28 +1,39 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda, Inter } from "next/font/google";
+import { Instrument_Serif, Inter } from "next/font/google";
 import { CartProvider } from "@/components/CartProvider";
+import { WishlistProvider } from "@/components/WishlistProvider";
 import { CartDrawer } from "@/components/CartDrawer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { RouteScrollCleanup } from "@/components/RouteScrollCleanup";
 import "./globals.css";
 
-/* Display: Didone at full optical range — the hairlines only resolve at
-   the very large sizes this design sets them at, so keep the 400/500 cut
-   and let `font-optical-sizing` thin the strokes as the type scales up.
-   Body: a neutral grotesque held small and quiet underneath it. */
-const displaySerif = Bodoni_Moda({
+/**
+ * Two faces, two CSS variables. Everything downstream reads `--font-display`
+ * or `--font-body` (declared in globals.css), so swapping a typeface means
+ * editing this file and the two token lines there — nothing else.
+ *
+ * `adjustFontFallback` is left at its default (true) so Next generates a
+ * metric-matched local fallback and the swap costs no layout shift.
+ */
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  // Instrument Serif ships a single weight. There is no bold to ask for.
+  weight: "400",
   style: ["normal", "italic"],
-  variable: "--font-display-serif",
+  variable: "--font-display-src",
   display: "swap",
+  // The hero headline is the LCP text — this is the one face worth preloading.
+  preload: true,
 });
 
-const bodySans = Inter({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-body-sans",
+  // No `weight` → the variable font, giving us the full 400–600 range.
+  variable: "--font-body-src",
   display: "swap",
+  // Body/UI type is not the LCP element; preloading it would compete with
+  // the hero image and the display face for early bandwidth.
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -43,14 +54,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${displaySerif.variable} ${bodySans.variable}`}
+      className={`${instrumentSerif.variable} ${inter.variable}`}
     >
-      <body className={`${bodySans.className} min-h-screen bg-paper antialiased`}>
+      <body className="min-h-screen bg-paper antialiased">
         <CartProvider>
-          <RouteScrollCleanup />
-          {children}
-          <CartDrawer />
-          <WhatsAppButton />
+          <WishlistProvider>
+            <RouteScrollCleanup />
+            {children}
+            <CartDrawer />
+            <WhatsAppButton />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>
