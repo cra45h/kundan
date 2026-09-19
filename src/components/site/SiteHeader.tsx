@@ -68,8 +68,11 @@ export function SiteHeader({
   const right = PRIMARY_NAV.slice(3);
 
   return (
+    /* Sticky, not fixed: a fixed header would sit on top of the
+       announcement bar and hide it. The hero is pulled up under this with
+       a negative margin so the transparent state has something to show. */
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 motion-reduce:transition-none ${
+      className={`sticky top-0 z-50 transition-colors duration-300 motion-reduce:transition-none ${
         solid
           ? "border-b border-border bg-ivory/95 backdrop-blur-md"
           : "border-b border-transparent bg-transparent"

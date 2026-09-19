@@ -15,8 +15,13 @@ const VIDEO = "/hero/bridal-gold.mp4";
  */
 export function Hero() {
   return (
-    <section className="on-dark relative" aria-labelledby="hero-heading">
-      <div className="grid min-h-[85vh] grid-cols-1 lg:grid-cols-2">
+    /* -mt-16 slides the hero under the sticky header so the transparent
+       state reads against the lacquer panel and the film. */
+    <section
+      className="on-dark relative -mt-16"
+      aria-labelledby="hero-heading"
+    >
+      <div className="grid min-h-[85vh] grid-cols-1 pt-16 lg:grid-cols-2">
         {/* Copy panel */}
         <div className="flex items-center bg-lacquer px-6 py-20 sm:px-10 lg:px-14 lg:py-24">
           <div className="mx-auto w-full max-w-xl">
