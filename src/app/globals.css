@@ -1705,20 +1705,49 @@
     #f0e4c4 48%,
     #e8d9b0 100%
   );
-  /* Four-sided transition radiating from the centre — the sectors meet at
-     a point and read as the crown facets of a brilliant cut. `from 45deg`
-     puts the seams on the diagonals so the bright axis is upright. */
-  --material-diamond: conic-gradient(
-    from 45deg at 50% 50%,
-    #ffffff 0deg,
-    #cfdde6 60deg,
-    #f6fafd 120deg,
-    #d8e4ec 180deg,
-    #ffffff 240deg,
-    #cfdde6 300deg,
-    #ffffff 360deg
-  );
-  /* Best Red → Dark Auburn → Canadian Cherry → Deep Berry */
+  /* Cut crystal, built from layers rather than a photograph.
+     The facet layers tile small — a couple of facet clusters fall inside
+     each letter stroke, which is what makes it read as a cut stone. At
+     one sweep per word it averages out into a plain blue wash.
+     Sizes differ per layer, so panning them together parallaxes the
+     prismatic flashes against the facets. */
+  --material-diamond:
+    conic-gradient(
+      from 140deg at 62% 58%,
+      rgba(255, 206, 232, 0.72) 0deg,
+      transparent 34deg,
+      rgba(168, 232, 255, 0.78) 78deg,
+      transparent 124deg,
+      rgba(255, 244, 190, 0.62) 190deg,
+      transparent 240deg,
+      rgba(196, 214, 255, 0.7) 310deg,
+      transparent 360deg
+    ),
+    conic-gradient(
+      from 25deg at 34% 30%,
+      #ffffff 0deg,
+      #a9c8dd 26deg,
+      #ffffff 58deg,
+      #7aa8c6 92deg,
+      #f2f9ff 128deg,
+      #8fb4cf 168deg,
+      #ffffff 214deg,
+      #6f9fc0 268deg,
+      #eaf4fb 312deg,
+      #ffffff 360deg
+    ),
+    linear-gradient(
+      120deg,
+      #ffffff 0%,
+      #d4e6f2 38%,
+      #ffffff 68%,
+      #c6dced 100%
+    );
+
+  /* Best Red -> Dark Auburn -> Canadian Cherry -> Deep Berry.
+     No longer used by the hero rotator (gold and diamond only). Retained
+     for the ruby material page, where the ground is light and these reds
+     measure 7.0:1 to 9.9:1. */
   --material-ruby: linear-gradient(
     100deg,
     #a31116 0%,
@@ -1734,6 +1763,17 @@
   .material-word {
     font-style: italic;
     color: var(--material-solid, var(--color-gold-bright));
+    /* Oversized so there is somewhere to pan to.
+       The position is driven through a custom property rather than being
+       tweened directly: the diamond fill is three stacked layers, and
+       background-position does not interpolate cleanly across a layer
+       list. A single value here is repeated to every layer by the
+       background shorthand rules, so one variable moves all three. */
+    --shimmer-x: 0%;
+    /* Per-layer sizes: flashes, facets, base wash. The gold fill is a
+       single layer and simply takes the first value. */
+    background-size: 44% 150%, 30% 135%, 220% 220%;
+    background-position: var(--shimmer-x) 50%;
   }
 
   @supports (background-clip: text) or (-webkit-background-clip: text) {

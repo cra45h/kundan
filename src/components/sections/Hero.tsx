@@ -31,11 +31,11 @@ export function Hero() {
             <p className="type-nav text-ivory/70">Kundan · Est. Lahore</p>
 
             {/* The rotating word is decorative duplication for AT, so the
-                heading exposes one stable sentence naming all three
-                materials and the animated copy is hidden from it. */}
+                heading exposes one stable sentence naming both materials
+                and the animated copy is hidden from it. */}
             <h1 id="hero-heading" className="type-h1 mt-5 text-ivory">
               <span className="sr-only">
-                Gold, diamond and ruby that outlive the occasion
+                Gold and diamond that outlive the occasion
               </span>
               <span aria-hidden>
                 <MaterialRotator /> that outlives the occasion
