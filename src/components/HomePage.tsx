@@ -1,7 +1,5 @@
 import { IntroLoader } from "@/components/site/IntroLoader";
-import { AnnouncementBar } from "@/components/site/AnnouncementBar";
-import { SiteHeader } from "@/components/site/SiteHeader";
-import { MobileStickyBar } from "@/components/site/MobileStickyBar";
+import { SiteShell } from "@/components/site/SiteShell";
 import { Hero } from "@/components/sections/Hero";
 import { HeroIntro } from "@/components/sections/HeroIntro";
 import { TrustStrip } from "@/components/sections/TrustStrip";
@@ -13,7 +11,6 @@ import { ConsultationBanner } from "@/components/sections/ConsultationBanner";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { Faq } from "@/components/sections/Faq";
 import { Newsletter } from "@/components/sections/Newsletter";
-import { Footer } from "@/components/Footer";
 import type { Product } from "@/lib/products";
 
 /**
@@ -22,6 +19,11 @@ import type { Product } from "@/lib/products";
  * Order is deliberate: hero, then proof, then a way in, then product. The
  * previous build ran six full-bleed editorial screens before the first
  * item; here product is reachable in two scrolls.
+ *
+ * Renders through SiteShell like every other route. It used to assemble
+ * its own chrome, which is how it ended up without <ScrollReveals> — every
+ * scroll reveal on the homepage silently did nothing. One frame, one place
+ * to mount page-wide behaviour.
  */
 export function HomePage({
   newArrivals,
@@ -35,10 +37,7 @@ export function HomePage({
       {/* Homepage only — interior pages should not sit behind a loader. */}
       <IntroLoader />
 
-      <AnnouncementBar />
-      <SiteHeader overlay />
-
-      <main id="main">
+      <SiteShell overlay>
         <HeroIntro />
         <Hero />
         <TrustStrip />
@@ -50,13 +49,7 @@ export function HomePage({
         <Testimonials />
         <Faq />
         <Newsletter />
-      </main>
-
-      <Footer />
-
-      {/* Clears the sticky bar so the footer's last row is reachable. */}
-      <div aria-hidden className="h-16 lg:hidden" />
-      <MobileStickyBar />
+      </SiteShell>
     </>
   );
 }
