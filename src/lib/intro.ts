@@ -2,54 +2,39 @@
  * Hand-off between the loading screen and the hero.
  *
  * Module state rather than context, because the two components are far
- * apart in the tree and the hero's effect would otherwise run first —
- * React runs effects child-first, so a hero asking "is the loader
- * running?" in an effect would always be told "no" and animate underneath
- * the overlay.
+ * apart in the tree. Ordering works because the loader decides in a layout
+ * effect and the hero waits in a passive one: React runs every layout
+ * effect before any passive effect, so the loader has always resolved by
+ * the time the hero asks.
  *
- * The loader claims the intro during render, which happens before any
- * effect below it, so the hero always sees the correct answer.
+ * Nothing here may be called during render. The overlay ships in the
+ * server HTML and must render identically on the client's first pass, or
+ * hydration diffs and every sibling shifts.
  */
 
 const SEEN_KEY = "kundan-intro-shown";
 const DONE_EVENT = "kundan:intro-done";
 
-let claimed = false;
 let finished = false;
 
 /**
- * Called by the loader during render. Returns true the first time per tab,
- * and never under reduced motion. Subsequent calls return the same answer,
- * so a double render in StrictMode cannot flip it.
+ * Whether the overlay should actually play. Client-only — call from an
+ * effect, never from render.
  */
-export function claimIntro(): boolean {
-  if (claimed) return !finished;
-  claimed = true;
+export function shouldPlayIntro(): boolean {
+  if (finished) return false;
+  if (typeof window === "undefined") return false;
 
-  if (typeof window === "undefined") {
-    // Server render: assume it will play, so the markup ships with the
-    // overlay present and there is no flash of content before it mounts.
-    return true;
-  }
-
-  let seen = false;
   try {
-    seen = sessionStorage.getItem(SEEN_KEY) === "1";
+    if (sessionStorage.getItem(SEEN_KEY) === "1") return false;
   } catch {
     // Blocked storage — treat as a first visit.
   }
 
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  if (seen || reduce) {
-    finished = true;
-    return false;
-  }
-
-  return true;
+  return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/** Called by the loader once the overlay is gone. */
+/** Called by the loader once the overlay is gone, or skipped outright. */
 export function finishIntro() {
   if (finished) return;
   finished = true;
@@ -63,7 +48,7 @@ export function finishIntro() {
 
 /**
  * Runs `cb` when the hero is clear to animate — immediately if the intro
- * is not playing, otherwise when the overlay finishes.
+ * has already resolved, otherwise when the overlay finishes.
  */
 export function onIntroDone(cb: () => void): () => void {
   if (finished || typeof window === "undefined") {

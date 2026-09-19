@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { claimIntro, finishIntro } from "@/lib/intro";
+import { finishIntro, shouldPlayIntro } from "@/lib/intro";
 
 gsap.registerPlugin(useGSAP);
 
@@ -12,29 +12,30 @@ const WORD = "KUNDAN";
 /**
  * Loading screen — the wordmark fills gold-into-diamond, then lifts away.
  *
- * Claimed during render, not in an effect, so the hero knows to hold
- * before its own effect runs. See lib/intro.ts for why that matters.
+ * The markup is unconditional. Whether the intro *plays* is decided in the
+ * layout effect below, never in render: returning `null` for a repeat
+ * visitor while the server had rendered the overlay is a hydration
+ * mismatch, and because this sits above the rest of the page every sibling
+ * shifts up when React regenerates the tree.
+ *
+ * Skipping happens in a layout effect, so the overlay is removed before
+ * the browser paints and a returning visitor sees no flash of it.
  *
  * Safety, in order of how badly each would fail:
  *  - No JavaScript: a <noscript> rule removes the overlay outright. It is
- *    fixed and full-screen, so leaving it in place would hide the site.
+ *    fixed and full-screen, so leaving it would hide the site.
  *  - JS present but this component throws before its timeline: the hero's
- *    own 4s backstop in onIntroDone releases it anyway.
- *  - Reduced motion, or already seen this tab: never rendered at all.
+ *    4s backstop in onIntroDone releases it anyway.
+ *  - Scroll lock is undone in cleanup, not only on completion, so an
+ *    interrupted navigation cannot leave the page frozen.
  */
 export function IntroLoader() {
-  // Render-time claim; stable across StrictMode's double render.
-  const [playing] = useState(() => claimIntro());
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      if (!playing) return;
-
-      // Client-side re-check: the server always ships the overlay, so a
-      // returning visitor or a reduced-motion visitor removes it here on
-      // the first frame instead of sitting through it.
-      if (!claimIntro()) {
+      if (!shouldPlayIntro()) {
+        // Repeat visit or reduced motion — take it out before first paint.
         gsap.set(root.current, { display: "none" });
         finishIntro();
         return;
@@ -85,10 +86,8 @@ export function IntroLoader() {
         tl.kill();
       };
     },
-    { scope: root, dependencies: [playing] }
+    { scope: root }
   );
-
-  if (!playing) return null;
 
   return (
     <>
