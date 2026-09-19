@@ -1,33 +1,53 @@
 @import "tailwindcss";
 
 /*
- * Kundan maison — night salon palette.
- * Midnight void, champagne gold, cool platinum paper.
- * Type: Bodoni Moda (display) + Manrope (body).
+ * Kundan maison — celestial gallery palette.
+ * Warm cream paper, tonal ghost headings, greige bands, warm ink.
+ * Type: Playfair Display (fashion serif) + Inter (grotesque body).
+ *
+ * Motion policy: no CSS @keyframes and no transition-driven motion.
+ * Every animation in this project is authored in GSAP or Framer Motion
+ * so timelines stay scrubbable, interruptible, and reduced-motion aware.
  */
 
 @theme {
-  --color-void: #07090e;
-  --color-ivory: #f4f1eb;
-  --color-paper: #ebe6dc;
-  --color-card: #f7f4ee;
-  --color-stone: #d8d2c6;
-  --color-gold: #bfa46a;
-  --color-gold-bright: #d4bc82;
-  --color-ink: #12151c;
-  --color-muted: #6e6960;
-  --color-border: #d9d3c8;
-  --color-brown: #1c1814;
+  /* Surfaces — warm cream gallery, no pure white anywhere. */
+  --color-paper: #f4efe2;
+  --color-ivory: #fbf8f0;
+  --color-card: #faf6ec;
+  --color-chalk: #faf6ec;
+
+  /* Tonal heading wash — the oversized display type sits on the page
+     as a slightly deeper cream, never as solid ink. */
+  --color-ghost: #e4dcc7;
+  --color-ghost-deep: #d8cfb6;
+
+  /* Structural greiges — category band and footer mast. */
+  --color-sand: #c8c1b1;
+  --color-taupe: #948d7e;
+  --color-taupe-deep: #7f7869;
+
+  /* Ink */
+  --color-ink: #1b1915;
+  --color-void: #1b1915;
+  --color-brown: #221f19;
+  --color-muted: #7a7367;
+  --color-border: #ded6c3;
+  --color-stone: #cfc7b5;
+  --color-platinum: #c3bcac;
+
+  /* Accent — used as hairlines and marks, never as fill. */
+  --color-gold: #b09a68;
+  --color-gold-bright: #c8b484;
   --color-lacquer: #5c1f2a;
-  --color-chalk: #f7f4ee;
-  --color-platinum: #c5c0b6;
 
-  --font-display: var(--font-bodoni), "Bodoni Moda", "Times New Roman", serif;
-  --font-body: var(--font-manrope), Manrope, system-ui, sans-serif;
+  --font-display: var(--font-display-serif), "Playfair Display", "Didot",
+    "Times New Roman", serif;
+  --font-body: var(--font-body-sans), Inter, system-ui, sans-serif;
 
-  --shadow-soft: 0 10px 28px rgba(7, 9, 14, 0.06);
-  --shadow-lift: 0 18px 40px rgba(7, 9, 14, 0.1);
-  --shadow-gold: 0 8px 24px rgba(191, 164, 106, 0.22);
+  --shadow-soft: 0 10px 28px rgba(27, 25, 21, 0.05);
+  --shadow-lift: 0 18px 40px rgba(27, 25, 21, 0.09);
+  --shadow-gold: 0 8px 24px rgba(176, 154, 104, 0.2);
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
@@ -1230,19 +1250,9 @@
   will-change: transform;
 }
 
-@keyframes kundan-logo-fill {
-  0%,
-  12% {
-    clip-path: inset(100% 0 0 0);
-  }
-  100% {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
+/* Logo colour-fill rise — GSAP owns the clip-path tween (BrandLoader). */
 .loader-fill {
   clip-path: inset(100% 0 0 0);
-  animation: kundan-logo-fill 2.1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .maison-grain {
@@ -1257,6 +1267,150 @@
 @media (prefers-reduced-motion: reduce) {
   .loader-fill {
     clip-path: inset(0 0 0 0);
-    animation: none;
+  }
+}
+
+/* ==========================================================================
+   Celestial gallery — typography & layout primitives
+   The reference design is carried almost entirely by type: a Didone display
+   set very large with tight tracking, tonal "ghost" section headings, and
+   serif uppercase labels tracked wide over a small neutral grotesque.
+   Motion for any of these lives in GSAP / Framer Motion, never here.
+   ========================================================================== */
+
+@layer utilities {
+  .container-celeste {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-celeste {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-celeste {
+      padding-inline: 3.5rem;
+    }
+  }
+
+  /* The masthead wordmark — hairline Didone at maximum optical size. */
+  .type-mast {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3.25rem, 15.5vw, 15rem);
+    line-height: 0.82;
+    letter-spacing: 0.005em;
+    font-optical-sizing: auto;
+    text-transform: uppercase;
+  }
+
+  /* Oversized tonal section heading — sits on the page as deeper cream. */
+  .type-ghost {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3rem, 11vw, 9.5rem);
+    line-height: 0.88;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--color-ghost);
+    font-optical-sizing: auto;
+  }
+
+  .type-ghost-deep {
+    color: var(--color-ghost-deep);
+  }
+
+  /* Serif uppercase label — category rails, product names, buttons. */
+  .type-serif-caps {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(0.95rem, 1.35vw, 1.2rem);
+    line-height: 1.15;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .type-serif-caps-sm {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Small neutral grotesque — paragraphs, specs, prices. */
+  .type-meta {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    color: var(--color-muted);
+  }
+
+  .type-copy {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    line-height: 1.8;
+    letter-spacing: 0.005em;
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 1024px) {
+    .type-copy {
+      font-size: 0.825rem;
+    }
+  }
+
+  /* Hairline rules that separate the reference's stacked category rails. */
+  .rule-hair {
+    border-top: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  }
+
+  /* Arched crown on the editorial portrait, as in the About panel. */
+  .arch-crown {
+    border-start-start-radius: 999px;
+    border-start-end-radius: 999px;
+    overflow: hidden;
+  }
+
+  /* Category tile + creation card. Motion is GSAP-driven; these only
+     describe the resting state. */
+  .celeste-tile {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--color-sand);
+  }
+
+  .celeste-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+  }
+
+  /* Section rhythm — the reference breathes hard between blocks. */
+  .section-celeste {
+    padding-block: 5rem;
+  }
+
+  @media (min-width: 768px) {
+    .section-celeste {
+      padding-block: 7rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section-celeste {
+      padding-block: 9rem;
+    }
   }
 }
