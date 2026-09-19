@@ -1,18 +1,17 @@
-"use client";
-
-import { useEffect, useRef, type ElementType, type ReactNode } from "react";
+import type { ElementType, ReactNode } from "react";
 
 /**
- * Fade-up on scroll that fails open.
+ * Marks an element for the scroll reveal.
  *
- * The markup renders fully visible. The hidden state is applied by this
- * effect and only when we can guarantee we can undo it — so if JS never
- * runs, if the bundle errors, or if IntersectionObserver is missing, the
- * content is simply there. The old homepage set `opacity: 0` in CSS and
- * relied on GSAP to clear it, which is what left a blank screen after the
- * hero when a trigger failed to fire.
+ * This is deliberately inert — it renders a plain element with a data
+ * attribute and ships no JavaScript of its own. All the motion is driven
+ * by the single <ScrollReveals /> controller mounted in SiteShell, which
+ * batches every marked element on the page into one GSAP ScrollTrigger.
+ * That is both cheaper than an observer per element and gives real stagger
+ * between siblings entering together.
  *
- * Under `prefers-reduced-motion: reduce` nothing is hidden at all.
+ * Because nothing here hides anything, the markup renders visible. If the
+ * bundle never loads, the page is simply on screen.
  */
 export function Reveal({
   children,
@@ -23,53 +22,15 @@ export function Reveal({
   children: ReactNode;
   as?: ElementType;
   className?: string;
-  /** Stagger offset in ms. */
+  /** Extra stagger offset in seconds, for elements that should trail. */
   delay?: number;
 }) {
-  const ref = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    if (typeof IntersectionObserver === "undefined") return;
-    if (!window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
-      return;
-    }
-
-    // Safe to hide: we hold the observer that will reveal it again.
-    el.dataset.revealHidden = "true";
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const target = entry.target as HTMLElement;
-          target.style.transitionDelay = `${delay}ms`;
-          delete target.dataset.revealHidden;
-          io.unobserve(target);
-        }
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.01 }
-    );
-
-    io.observe(el);
-
-    // Belt and braces: if anything stalls, drop the hidden state anyway.
-    const failsafe = window.setTimeout(() => {
-      delete el.dataset.revealHidden;
-      io.disconnect();
-    }, 2500);
-
-    return () => {
-      window.clearTimeout(failsafe);
-      io.disconnect();
-      delete el.dataset.revealHidden;
-    };
-  }, [delay]);
-
   return (
-    <Tag ref={ref} className={`reveal ${className}`}>
+    <Tag
+      data-reveal
+      data-reveal-delay={delay ? delay / 1000 : undefined}
+      className={className}
+    >
       {children}
     </Tag>
   );

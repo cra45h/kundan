@@ -3,6 +3,7 @@ import { AnnouncementBar } from "@/components/site/AnnouncementBar";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { MobileStickyBar } from "@/components/site/MobileStickyBar";
 import { Footer } from "@/components/Footer";
+import { ScrollReveals } from "@/components/ui/ScrollReveals";
 
 /**
  * The page frame every route shares.
@@ -34,6 +35,9 @@ export function SiteShell({
       >
         Skip to content
       </a>
+
+      {/* Drives every <Reveal> on the page from one batched trigger. */}
+      <ScrollReveals />
 
       <AnnouncementBar />
       <SiteHeader overlay={overlay} />

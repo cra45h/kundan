@@ -9,7 +9,7 @@ export function TrustStrip() {
     <section aria-label="Our commitments" className="border-b border-border bg-ivory">
       <ul className="mx-auto grid max-w-[1280px] grid-cols-2 gap-x-6 gap-y-8 px-4 py-10 sm:px-6 lg:grid-cols-4 lg:px-8">
         {TRUST_ITEMS.map((item) => (
-          <li key={item.title} className="flex items-start gap-3">
+          <li key={item.title} data-reveal className="flex items-start gap-3">
             <TrustIcon icon={item.icon} />
             <div>
               <p className="type-caption text-ink">{item.title}</p>

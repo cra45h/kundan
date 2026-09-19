@@ -32,7 +32,7 @@ export function ProductCard({
   const alt = product.gallery?.find((g) => g && g !== product.image);
 
   return (
-    <article className="group relative">
+    <article data-reveal className="group relative">
       <div className="relative aspect-4/5 w-full overflow-hidden bg-card">
         {/* No link here: the caption's stretched overlay already covers the
             plate, so wrapping the image too would put two links to the same

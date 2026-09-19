@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Accent } from "@/components/ui/Accent";
 import { Reveal } from "@/components/ui/Reveal";
+import { Parallax } from "@/components/ui/Parallax";
 import { CRAFT_STEPS } from "@/data/mock";
 
 /**
@@ -16,16 +17,21 @@ export function CraftSection() {
     >
       <div className="mx-auto grid max-w-[1280px] gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8">
         <Reveal>
-          <div className="relative aspect-4/5 w-full overflow-hidden rounded-t-[9rem] bg-brown sm:aspect-square lg:aspect-4/5">
-            <Image
-              src="/catalogs/mehr/bridal-dress.jpg"
-              alt="A Kundan piece being finished by hand at the bench"
-              fill
-              loading="lazy"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
+          <Parallax
+            amount={10}
+            className="relative aspect-4/5 w-full rounded-t-[9rem] bg-brown sm:aspect-square lg:aspect-4/5"
+          >
+            <div className="absolute inset-[-6%]">
+              <Image
+                src="/catalogs/mehr/bridal-dress.jpg"
+                alt="A Kundan piece being finished by hand at the bench"
+                fill
+                loading="lazy"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+          </Parallax>
         </Reveal>
 
         <Reveal delay={80}>

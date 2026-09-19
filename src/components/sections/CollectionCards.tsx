@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Accent } from "@/components/ui/Accent";
 import { Reveal } from "@/components/ui/Reveal";
+import { Parallax } from "@/components/ui/Parallax";
 import { ArrowIcon } from "@/components/site/icons";
 import { COLLECTION_CARDS } from "@/data/mock";
 import { materialMeta } from "@/lib/products";
@@ -69,17 +70,24 @@ export function CollectionCards() {
           href="/materials/gold"
           className="on-dark group relative block min-h-[22rem] overflow-hidden md:min-h-[26rem]"
         >
-          <Image
-            src={materialMeta.gold.heroWide}
-            alt={campaign.imageAlt}
-            fill
-            loading="lazy"
-            sizes="100vw"
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          />
+          <Parallax amount={12} className="absolute inset-0">
+            <div className="absolute inset-[-8%]">
+              <Image
+                src={materialMeta.gold.heroWide}
+                alt={campaign.imageAlt}
+                fill
+                loading="lazy"
+                sizes="100vw"
+                className="object-cover"
+              />
+            </div>
+          </Parallax>
+          {/* The copy column runs past where the old scrim had already
+              faded out, leaving the paragraph sitting on bright sky. Hold
+              the wash darker across the text, then release it. */}
           <div
             aria-hidden
-            className="absolute inset-0 bg-linear-to-r from-void/85 via-void/45 to-transparent"
+            className="absolute inset-0 bg-linear-to-r from-void/90 from-10% via-void/65 via-45% to-void/5"
           />
           <div className="relative flex min-h-[22rem] items-center px-6 py-16 sm:px-10 md:min-h-[26rem] lg:px-16">
             <div className="max-w-xl">
