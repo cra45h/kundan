@@ -63,8 +63,10 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Film panel — arch mask, Reference C */}
-        <div className="relative min-h-[60vh] bg-void lg:min-h-full">
+        {/* Film panel — arch mask, Reference C.
+            Lacquer, not void: this is the ground the arch is cut out of, so
+            it has to match the copy panel or the hero reads as two colours. */}
+        <div className="relative min-h-[60vh] bg-lacquer lg:min-h-full">
           <div className="absolute inset-0 overflow-hidden lg:inset-6 lg:rounded-t-[14rem]">
             <video
               className="h-full w-full object-cover"
