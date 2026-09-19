@@ -34,7 +34,10 @@ export function ProductCard({
   return (
     <article className="group relative">
       <div className="relative aspect-4/5 w-full overflow-hidden bg-card">
-        <Link href={href} className="block h-full w-full" tabIndex={-1} aria-hidden>
+        {/* No link here: the caption's stretched overlay already covers the
+            plate, so wrapping the image too would put two links to the same
+            destination on every card. */}
+        <div className="h-full w-full">
           {imgError ? (
             <span className="flex h-full w-full items-center justify-center text-[0.7rem] tracking-[0.1em] text-muted uppercase">
               Kundan
@@ -65,7 +68,7 @@ export function ProductCard({
               ) : null}
             </>
           )}
-        </Link>
+        </div>
 
         <button
           type="button"

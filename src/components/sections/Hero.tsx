@@ -17,13 +17,16 @@ export function Hero() {
   return (
     /* -mt-16 slides the hero under the sticky header so the transparent
        state reads against the lacquer panel and the film. */
+    /* bg-lacquer on the section, not just the panel: the strip sitting
+       under the transparent header has to be painted or the page ground
+       shows through as a pale band. */
     <section
-      className="on-dark relative -mt-16"
+      className="on-dark relative -mt-16 bg-lacquer"
       aria-labelledby="hero-heading"
     >
-      <div className="grid min-h-[85vh] grid-cols-1 pt-16 lg:grid-cols-2">
+      <div className="grid min-h-[85vh] grid-cols-1 lg:grid-cols-2">
         {/* Copy panel */}
-        <div className="flex items-center bg-lacquer px-6 py-20 sm:px-10 lg:px-14 lg:py-24">
+        <div className="flex items-center bg-lacquer px-6 pt-28 pb-20 sm:px-10 lg:px-14 lg:pt-32 lg:pb-24">
           <div className="mx-auto w-full max-w-xl">
             <p className="type-nav text-ivory/70">Kundan · Est. Lahore</p>
 
