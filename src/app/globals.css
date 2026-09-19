@@ -1654,3 +1654,33 @@
     }
   }
 }
+
+/* ==========================================================================
+   Reveal — see components/ui/Reveal.tsx
+   The visible state is the default. Only an element that JS has explicitly
+   marked gets hidden, so a failed script leaves content on screen.
+   ========================================================================== */
+
+@layer utilities {
+  .reveal {
+    transition:
+      opacity 500ms var(--ease-out),
+      transform 500ms var(--ease-out);
+  }
+
+  .reveal[data-reveal-hidden="true"] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      transition: none;
+    }
+
+    .reveal[data-reveal-hidden="true"] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

@@ -1,14 +1,13 @@
 import type { SVGProps } from "react";
 
+/** Every icon takes the usual SVG props plus a square `size` in px. */
+export type IconProps = SVGProps<SVGSVGElement> & { size?: number };
+
 /**
  * Shared line icons. Stroke-only, 1.4 weight, sized by the caller.
  * All are decorative — the interactive element carries the aria-label.
  */
-function Svg({
-  size = 17,
-  children,
-  ...rest
-}: SVGProps<SVGSVGElement> & { size?: number }) {
+function Svg({ size = 17, children, ...rest }: IconProps) {
   return (
     <svg
       width={size}
@@ -24,7 +23,7 @@ function Svg({
   );
 }
 
-export function SearchIcon(props: SVGProps<SVGSVGElement>) {
+export function SearchIcon(props: IconProps) {
   return (
     <Svg {...props}>
       <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="1.4" />
@@ -41,7 +40,7 @@ export function SearchIcon(props: SVGProps<SVGSVGElement>) {
 export function HeartIcon({
   filled = false,
   ...props
-}: SVGProps<SVGSVGElement> & { filled?: boolean }) {
+}: IconProps & { filled?: boolean }) {
   return (
     <Svg {...props}>
       <path
@@ -55,7 +54,7 @@ export function HeartIcon({
   );
 }
 
-export function BagIcon(props: SVGProps<SVGSVGElement>) {
+export function BagIcon(props: IconProps) {
   return (
     <Svg {...props}>
       <path
@@ -74,7 +73,7 @@ export function BagIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function WhatsAppIcon(props: SVGProps<SVGSVGElement>) {
+export function WhatsAppIcon(props: IconProps) {
   return (
     <Svg {...props}>
       <path
@@ -85,7 +84,7 @@ export function WhatsAppIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function ArrowIcon(props: SVGProps<SVGSVGElement>) {
+export function ArrowIcon(props: IconProps) {
   return (
     <Svg {...props}>
       <path
@@ -99,7 +98,7 @@ export function ArrowIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function PlusIcon(props: SVGProps<SVGSVGElement>) {
+export function PlusIcon(props: IconProps) {
   return (
     <Svg {...props}>
       <path
