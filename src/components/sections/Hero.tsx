@@ -40,17 +40,13 @@ export function Hero() {
         {/* Headline */}
         <div className="order-1 px-6 pt-16 max-[374px]:pt-12 sm:px-10 sm:pt-24 lg:order-none lg:col-start-1 lg:row-start-1 lg:self-end lg:px-14 lg:pt-0">
           <div className="mx-auto w-full max-w-xl">
-            <p data-hero-item className="type-nav text-ivory/70">
-              Kundan · Est. Lahore
-            </p>
-
             {/* The rotating word is decorative duplication for AT, so the
                 heading exposes one stable sentence naming both materials
                 and the animated copy is hidden from it. */}
             <h1
               data-hero-item
               id="hero-heading"
-              className="type-h1 mt-5 text-ivory"
+              className="type-h1 text-ivory"
             >
               <span className="sr-only">
                 Gold and diamond that outlive the occasion

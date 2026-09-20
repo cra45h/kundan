@@ -167,10 +167,12 @@ export function SiteHeader({
               <SearchIcon />
             </Link>
 
+            {/* Below lg these three live in the bottom action bar; six
+                icons crowded the header and each was a small tap target. */}
             <Link
               href="/collections/signature"
               aria-label={`Wishlist${hydrated && wishCount ? `, ${wishCount} saved` : ""}`}
-              className="relative inline-flex h-10 w-10 items-center justify-center"
+              className="relative hidden h-10 w-10 items-center justify-center lg:inline-flex"
             >
               <HeartIcon />
               {hydrated && wishCount > 0 ? <Badge>{wishCount}</Badge> : null}
@@ -180,7 +182,7 @@ export function SiteHeader({
               type="button"
               onClick={openCart}
               aria-label={`Open bag${bagCount ? `, ${bagCount} item${bagCount === 1 ? "" : "s"}` : ""}`}
-              className="relative inline-flex h-10 w-10 items-center justify-center"
+              className="relative hidden h-10 w-10 items-center justify-center lg:inline-flex"
             >
               <BagIcon />
               {bagCount > 0 ? <Badge>{bagCount}</Badge> : null}
@@ -191,7 +193,7 @@ export function SiteHeader({
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Chat with us on WhatsApp"
-              className="inline-flex h-10 w-10 items-center justify-center"
+              className="hidden h-10 w-10 items-center justify-center lg:inline-flex"
             >
               <WhatsAppIcon />
             </a>
