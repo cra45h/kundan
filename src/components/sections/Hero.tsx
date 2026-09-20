@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { MaterialRotator } from "@/components/sections/MaterialRotator";
 import { MotionCta } from "@/components/motion/MotionCta";
 
@@ -7,26 +6,39 @@ const POSTER = "/hero/bridal-gold-poster.jpg";
 const VIDEO = "/hero/bridal-gold.mp4";
 
 /**
- * Split hero — lacquer copy panel beside an arch-masked film.
+ * Hero — lacquer ground with an arch-masked film.
  *
- * Deliberately 85vh so the trust strip peeks above the fold and the page
- * reads as a shop rather than a title card. Server-rendered with no
- * reveal wrapper: this is the LCP block and must paint immediately.
+ * Two arrangements of the same three blocks, one film element:
+ *
+ *   phone    headline → arched window → copy → buttons
+ *   desktop  headline + copy + buttons left, film filling the right column
+ *
+ * The blocks are ordered with flex `order` on small screens and placed
+ * explicitly on the desktop grid, so the window can sit between the
+ * headline and the copy on a phone without duplicating the <video> or
+ * shipping a second one to download.
+ *
+ * `lg:grid-rows-2` with the text halves pinned to the inner edges is what
+ * keeps the desktop column optically centred while the film still spans
+ * the full 85vh.
+ *
+ * Server-rendered with no reveal wrapper: this is the LCP block and must
+ * paint immediately.
  */
 export function Hero() {
   return (
     /* -mt-16 slides the hero under the sticky header so the transparent
-       state reads against the lacquer panel and the film. */
-    /* bg-lacquer on the section, not just the panel: the strip sitting
-       under the transparent header has to be painted or the page ground
-       shows through as a pale band. */
+       state reads against the lacquer panel and the film.
+       bg-lacquer on the section, not just a panel: the strip sitting under
+       the transparent header has to be painted or the page ground shows
+       through as a pale band. */
     <section
       className="on-dark relative -mt-16 bg-lacquer"
       aria-labelledby="hero-heading"
     >
-      <div className="grid grid-cols-1 lg:min-h-[85vh] lg:grid-cols-2">
-        {/* Copy panel */}
-        <div className="flex items-center bg-lacquer px-6 pt-16 pb-8 sm:px-10 sm:pt-24 sm:pb-16 lg:px-14 lg:pt-32 lg:pb-24">
+      <div className="flex flex-col lg:grid lg:min-h-[85vh] lg:grid-cols-2 lg:grid-rows-2">
+        {/* Headline */}
+        <div className="order-1 px-6 pt-16 max-[374px]:pt-12 sm:px-10 sm:pt-24 lg:order-none lg:col-start-1 lg:row-start-1 lg:self-end lg:px-14 lg:pt-0">
           <div className="mx-auto w-full max-w-xl">
             <p data-hero-item className="type-nav text-ivory/70">
               Kundan · Est. Lahore
@@ -35,7 +47,11 @@ export function Hero() {
             {/* The rotating word is decorative duplication for AT, so the
                 heading exposes one stable sentence naming both materials
                 and the animated copy is hidden from it. */}
-            <h1 data-hero-item id="hero-heading" className="type-h1 mt-5 text-ivory">
+            <h1
+              data-hero-item
+              id="hero-heading"
+              className="type-h1 mt-5 text-ivory"
+            >
               <span className="sr-only">
                 Gold and diamond that outlive the occasion
               </span>
@@ -43,13 +59,56 @@ export function Hero() {
                 <MaterialRotator /> that outlives the occasion
               </span>
             </h1>
+          </div>
+        </div>
 
-            <p data-hero-item className="type-body mt-6 text-ivory/75">
+        {/* Film — the window. Inset and arched at every size now, rather
+            than full-bleed on phones, so it reads as a framed view on the
+            lacquer instead of a band stuck to the bottom of the hero. */}
+        <div className="order-2 px-6 pt-6 sm:mx-auto sm:w-full sm:max-w-md sm:px-10 lg:mx-0 lg:max-w-none lg:order-none lg:col-span-1 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:p-6">
+          <div className="relative aspect-square overflow-hidden rounded-t-[7rem] max-[374px]:aspect-4/3 max-[374px]:rounded-t-[5rem] sm:aspect-4/5 sm:rounded-t-[10rem] lg:aspect-auto lg:h-full lg:rounded-t-[14rem]">
+            <div data-hero-plate className="h-full w-full">
+              <video
+                className="h-full w-full object-cover"
+                poster={POSTER}
+                preload="metadata"
+                autoPlay
+                muted
+                loop
+                playsInline
+                aria-hidden
+              >
+                <source src={VIDEO} type="video/mp4" />
+              </video>
+
+              {/* Poster stands in wherever the video cannot play (reduced
+                  data, autoplay blocked). Hidden from AT — decorative. */}
+              <noscript>
+                <Image
+                  src={POSTER}
+                  alt=""
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </noscript>
+            </div>
+          </div>
+        </div>
+
+        {/* Copy and actions */}
+        <div className="order-3 px-6 pt-6 pb-10 sm:px-10 sm:pb-16 lg:order-none lg:col-start-1 lg:row-start-2 lg:self-start lg:px-14 lg:pt-0 lg:pb-0">
+          <div className="mx-auto w-full max-w-xl">
+            <p data-hero-item className="type-body text-ivory/75 lg:mt-6">
               Hand-set 22K bridal and everyday pieces, hallmarked in our own
               atelier and made to pass down.
             </p>
 
-            <div data-hero-item className="mt-8 flex flex-wrap items-center gap-3 lg:mt-9">
+            <div
+              data-hero-item
+              className="mt-6 flex flex-wrap items-center gap-3 lg:mt-9"
+            >
               <MotionCta href="/catalogs/mehr" variant="light">
                 Shop Bridal
               </MotionCta>
@@ -61,47 +120,6 @@ export function Hero() {
               >
                 Shop Everyday
               </MotionCta>
-            </div>
-          </div>
-        </div>
-
-        {/* Film panel — arch mask, Reference C.
-            Lacquer, not void: this is the ground the arch is cut out of, so
-            it has to match the copy panel or the hero reads as two colours. */}
-        {/* Shorter on phones. At 60vh the hero ran to 1.28 screens, so the
-            trust strip never peeked and nothing signalled there was more
-            page below. */}
-        <div /* Narrowest phones only: 28vh left the trust strip ~19px behind the
-              sticky action bar, so nothing peeked and the fold read as the
-              end of the page. */
-          className="relative min-h-[28vh] bg-lacquer max-[374px]:min-h-[23vh] sm:min-h-[46vh] lg:min-h-full">
-          <div className="absolute inset-0 overflow-hidden lg:inset-6 lg:rounded-t-[14rem]">
-            <div data-hero-plate className="h-full w-full">
-            <video
-              className="h-full w-full object-cover"
-              poster={POSTER}
-              preload="metadata"
-              autoPlay
-              muted
-              loop
-              playsInline
-              aria-hidden
-            >
-              <source src={VIDEO} type="video/mp4" />
-            </video>
-
-            {/* Poster stands in wherever the video cannot play (reduced data,
-                autoplay blocked). Hidden from AT — decorative either way. */}
-            <noscript>
-              <Image
-                src={POSTER}
-                alt=""
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-            </noscript>
             </div>
           </div>
         </div>
