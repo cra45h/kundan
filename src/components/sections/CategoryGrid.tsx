@@ -43,7 +43,8 @@ export function CategoryGrid() {
                   type="button"
                   aria-selected={active}
                   onClick={() => setSegment(s.id)}
-                  className={`type-nav relative rounded-full px-4 py-2 ${
+                  /* min-h-11 = 44px, the smallest comfortable tap target. */
+                  className={`type-nav relative inline-flex min-h-11 items-center rounded-full px-4 ${
                     active ? "text-ivory" : "text-muted hover:text-ink"
                   }`}
                 >

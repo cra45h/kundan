@@ -1485,7 +1485,9 @@
   .type-h1 {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(2.75rem, 7vw, 6rem);
+    /* 2.4rem floor rather than 2.75: at 360px the old minimum pushed the
+       hero past a full screen once the material word took its own line. */
+    font-size: clamp(2.4rem, 7vw, 6rem);
     line-height: 1;
     letter-spacing: -0.025em;
     text-wrap: balance;

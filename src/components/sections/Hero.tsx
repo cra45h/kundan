@@ -24,9 +24,9 @@ export function Hero() {
       className="on-dark relative -mt-16 bg-lacquer"
       aria-labelledby="hero-heading"
     >
-      <div className="grid min-h-[85vh] grid-cols-1 lg:grid-cols-2">
+      <div className="grid grid-cols-1 lg:min-h-[85vh] lg:grid-cols-2">
         {/* Copy panel */}
-        <div className="flex items-center bg-lacquer px-6 pt-28 pb-20 sm:px-10 lg:px-14 lg:pt-32 lg:pb-24">
+        <div className="flex items-center bg-lacquer px-6 pt-16 pb-8 sm:px-10 sm:pt-24 sm:pb-16 lg:px-14 lg:pt-32 lg:pb-24">
           <div className="mx-auto w-full max-w-xl">
             <p data-hero-item className="type-nav text-ivory/70">
               Kundan · Est. Lahore
@@ -49,7 +49,7 @@ export function Hero() {
               atelier and made to pass down.
             </p>
 
-            <div data-hero-item className="mt-9 flex flex-wrap items-center gap-3">
+            <div data-hero-item className="mt-8 flex flex-wrap items-center gap-3 lg:mt-9">
               <MotionCta href="/catalogs/mehr" variant="light">
                 Shop Bridal
               </MotionCta>
@@ -68,7 +68,13 @@ export function Hero() {
         {/* Film panel — arch mask, Reference C.
             Lacquer, not void: this is the ground the arch is cut out of, so
             it has to match the copy panel or the hero reads as two colours. */}
-        <div className="relative min-h-[60vh] bg-lacquer lg:min-h-full">
+        {/* Shorter on phones. At 60vh the hero ran to 1.28 screens, so the
+            trust strip never peeked and nothing signalled there was more
+            page below. */}
+        <div /* Narrowest phones only: 28vh left the trust strip ~19px behind the
+              sticky action bar, so nothing peeked and the fold read as the
+              end of the page. */
+          className="relative min-h-[28vh] bg-lacquer max-[374px]:min-h-[23vh] sm:min-h-[46vh] lg:min-h-full">
           <div className="absolute inset-0 overflow-hidden lg:inset-6 lg:rounded-t-[14rem]">
             <div data-hero-plate className="h-full w-full">
             <video

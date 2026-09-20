@@ -120,7 +120,8 @@ export function ArrowLink({
     animate: "rest",
     whileHover: "hover",
     whileFocus: "hover",
-    className: `type-nav inline-flex items-center gap-2 ${className}`,
+    /* min-h-11 gives these text links a real tap target; they were 14px. */
+    className: `type-nav inline-flex min-h-11 items-center gap-2 ${className}`,
   } as const;
 
   if (external) {

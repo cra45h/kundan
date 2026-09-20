@@ -81,8 +81,12 @@ export function MaterialRotator() {
   const material = reduce ? MATERIALS[0] : MATERIALS[index];
 
   return (
+    /* `grid`, not `inline-grid`: the box is always as wide as the longest
+       label, so inline it left a dead gap before the next word whenever the
+       shorter one was showing. On its own line that reserved space falls
+       off the end where nobody sees it, and the line below never reflows. */
     <span
-      className="relative inline-grid align-baseline"
+      className="relative grid w-fit"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >

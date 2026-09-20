@@ -107,7 +107,7 @@ export function ProductCard({
               ? `Remove ${product.name} from wishlist`
               : `Save ${product.name} to wishlist`
           }
-          className="absolute top-2.5 right-2.5 z-10 inline-flex h-9 w-9 items-center justify-center bg-ivory/90 text-ink hover:text-gold-deep"
+          className="absolute top-2.5 right-2.5 z-10 inline-flex h-10 w-10 items-center justify-center bg-ivory/90 text-ink hover:text-gold-deep"
         >
           <HeartIcon size={15} filled={liked} />
         </button>
@@ -133,7 +133,7 @@ export function ProductCard({
           aria-label={`Add ${product.name} to bag`}
           /* Touch has no hover to reveal it, so it is always on there and
              the variants only take effect from md up. */
-          className="type-nav absolute inset-x-2.5 bottom-2.5 z-10 inline-flex items-center justify-center gap-2 bg-ink py-3 text-ivory max-md:!opacity-100 max-md:!transform-none"
+          className="type-nav absolute inset-x-2.5 bottom-2.5 z-10 inline-flex min-h-11 items-center justify-center gap-2 bg-ink py-3 text-ivory max-md:!opacity-100 max-md:!transform-none"
         >
           <PlusIcon size={14} />
           Quick add

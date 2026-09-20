@@ -78,7 +78,7 @@ export function ProductTabs({
                         cur === "bestsellers" ? "new" : "bestsellers"
                       );
                     }}
-                    className={`type-nav relative pb-1.5 ${
+                    className={`type-nav relative inline-flex min-h-11 items-end pb-2.5 ${
                       selected ? "text-ink" : "text-muted hover:text-ink"
                     }`}
                   >

@@ -139,7 +139,7 @@ export function SiteHeader({
         <Link
           href="/"
           aria-label="Kundan — home"
-          className="font-display shrink-0 text-[1.35rem] leading-none tracking-[0.3em] uppercase"
+          className="font-display inline-flex shrink-0 items-center py-3 text-[1.35rem] leading-none tracking-[0.3em] uppercase"
         >
           Kundan
         </Link>
@@ -224,7 +224,7 @@ export function SiteHeader({
                 type="button"
                 onClick={() => setMenuOpen(false)}
                 aria-label="Close menu"
-                className="-mr-2 inline-flex h-10 w-10 items-center justify-center text-2xl leading-none"
+                className="-mr-2 inline-flex h-11 w-11 items-center justify-center text-2xl leading-none"
               >
                 ×
               </button>
@@ -236,7 +236,7 @@ export function SiteHeader({
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="type-h3 block py-2.5"
+                      className="type-h3 flex min-h-12 items-center py-2"
                       onClick={() => setMenuOpen(false)}
                     >
                       {item.label}
