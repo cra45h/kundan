@@ -79,6 +79,15 @@ export function SiteHeader({
         duration: 0.35,
         ease: "power2.out",
       });
+
+      /* The scrim is the inverse: it only exists while the bar is
+         transparent, holding the nav legible over whatever photography is
+         behind it. Without it the links wash out against a bright hero. */
+      gsap.to("[data-header-scrim]", {
+        autoAlpha: solid ? 0 : 1,
+        duration: 0.35,
+        ease: "power2.out",
+      });
     },
     { scope: barRef, dependencies: [solid] }
   );
@@ -99,6 +108,15 @@ export function SiteHeader({
         aria-hidden
         className="absolute inset-0 border-b border-border bg-ivory/95 backdrop-blur-md"
         style={{ opacity: 0, visibility: "hidden" }}
+      />
+
+      {/* Legibility wash for the transparent state. Taller than the bar so
+          it falls off rather than ending on a visible edge. */}
+      <div
+        data-header-scrim
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,rgba(7,9,14,0.55)_0%,rgba(7,9,14,0.28)_45%,transparent_100%)]"
+        style={{ opacity: overlay ? 1 : 0, visibility: overlay ? "visible" : "hidden" }}
       />
       <div
         className={`relative mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 ${

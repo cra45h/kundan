@@ -11,16 +11,17 @@ const VIDEO = "/hero/bridal-gold.mp4";
  * Two arrangements of the same three blocks, one film element:
  *
  *   phone    headline → arched window → copy → buttons
- *   desktop  headline + copy + buttons left, film filling the right column
+ *   desktop  text centred in the left column, film filling the right
  *
- * The blocks are ordered with flex `order` on small screens and placed
- * explicitly on the desktop grid, so the window can sit between the
- * headline and the copy on a phone without duplicating the <video> or
- * shipping a second one to download.
+ * The text blocks sit in a wrapper that is `display: contents` on phones,
+ * so they stay siblings of the film and `order` can slot the window
+ * between them. From lg the wrapper becomes a flex column and centres the
+ * pair as one block, which is what puts the text's midline on the film's.
+ * Splitting them across two equal grid rows instead left the taller
+ * headline pushing the pair 65px high.
  *
- * `lg:grid-rows-2` with the text halves pinned to the inner edges is what
- * keeps the desktop column optically centred while the film still spans
- * the full 85vh.
+ * The film is last in the DOM because the wrapper has to hold both text
+ * blocks contiguously; `order` handles the phone sequence.
  *
  * Server-rendered with no reveal wrapper: this is the LCP block and must
  * paint immediately.
@@ -36,32 +37,65 @@ export function Hero() {
       className="on-dark relative -mt-16 bg-lacquer"
       aria-labelledby="hero-heading"
     >
-      <div className="flex flex-col lg:grid lg:min-h-[85vh] lg:grid-cols-2 lg:grid-rows-2">
-        {/* Headline */}
-        <div className="order-1 px-6 pt-16 max-[374px]:pt-12 sm:px-10 sm:pt-24 lg:order-none lg:col-start-1 lg:row-start-1 lg:self-end lg:px-14 lg:pt-0">
-          <div className="mx-auto w-full max-w-xl">
-            {/* The rotating word is decorative duplication for AT, so the
-                heading exposes one stable sentence naming both materials
-                and the animated copy is hidden from it. */}
-            <h1
-              data-hero-item
-              id="hero-heading"
-              className="type-h1 text-ivory"
-            >
-              <span className="sr-only">
-                Gold and diamond that outlive the occasion
-              </span>
-              <span aria-hidden>
-                <MaterialRotator /> that outlives the occasion
-              </span>
-            </h1>
+      <div className="flex flex-col lg:grid lg:min-h-[85vh] lg:grid-cols-2">
+        <div className="contents lg:flex lg:flex-col lg:justify-center lg:px-14">
+          {/* Headline */}
+          <div className="order-1 px-6 pt-16 max-[374px]:pt-12 sm:px-10 sm:pt-24 lg:order-none lg:px-0 lg:pt-0">
+            <div className="mx-auto w-full max-w-xl">
+              {/* The rotating word is decorative duplication for AT, so the
+                  heading exposes one stable sentence naming both materials
+                  and the animated copy is hidden from it. */}
+              <h1
+                data-hero-item
+                id="hero-heading"
+                className="type-h1 text-ivory"
+              >
+                <span className="sr-only">
+                  Gold and diamond that outlive the occasion
+                </span>
+                <span aria-hidden>
+                  <MaterialRotator /> that outlives the occasion
+                </span>
+              </h1>
+            </div>
+          </div>
+
+          {/* Copy and actions */}
+          <div className="order-3 px-6 pt-6 pb-10 sm:px-10 sm:pb-16 lg:order-none lg:px-0 lg:pt-6 lg:pb-0">
+            <div className="mx-auto w-full max-w-xl">
+              <p data-hero-item className="type-body text-ivory/75">
+                Hand-set 22K bridal and everyday pieces, hallmarked in our own
+                atelier and made to pass down.
+              </p>
+
+              <div
+                data-hero-item
+                className="mt-6 flex flex-wrap items-center gap-3 lg:mt-9"
+              >
+                <MotionCta href="/catalogs/mehr" variant="light">
+                  Shop Bridal
+                </MotionCta>
+                <MotionCta
+                  href="/catalogs/rozana"
+                  variant="outline"
+                  arrow
+                  className="text-ivory"
+                >
+                  Shop Everyday
+                </MotionCta>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Film — the window. Inset and arched at every size now, rather
-            than full-bleed on phones, so it reads as a framed view on the
-            lacquer instead of a band stuck to the bottom of the hero. */}
-        <div className="order-2 px-6 pt-6 sm:mx-auto sm:w-full sm:max-w-md sm:px-10 lg:mx-0 lg:max-w-none lg:order-none lg:col-span-1 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:p-6">
+        {/* Film — the window. Inset and arched at every size, so it reads as
+            a framed view on the lacquer rather than a band stuck to the
+            bottom of the hero.
+            The width is capped between sm and lg: an aspect-ratio box scales
+            with its container, and at 768 a 4:5 plate came out 688x860.
+            Narrowest phones get a shorter 4:3, where a square window pushed
+            the primary CTA under the action bar. */}
+        <div className="order-2 px-6 pt-6 sm:mx-auto sm:w-full sm:max-w-md sm:px-10 lg:order-none lg:mx-0 lg:max-w-none lg:p-6">
           <div className="relative aspect-square overflow-hidden rounded-t-[7rem] max-[374px]:aspect-4/3 max-[374px]:rounded-t-[5rem] sm:aspect-4/5 sm:rounded-t-[10rem] lg:aspect-auto lg:h-full lg:rounded-t-[14rem]">
             <div data-hero-plate className="h-full w-full">
               <video
@@ -89,33 +123,6 @@ export function Hero() {
                   className="object-cover"
                 />
               </noscript>
-            </div>
-          </div>
-        </div>
-
-        {/* Copy and actions */}
-        <div className="order-3 px-6 pt-6 pb-10 sm:px-10 sm:pb-16 lg:order-none lg:col-start-1 lg:row-start-2 lg:self-start lg:px-14 lg:pt-0 lg:pb-0">
-          <div className="mx-auto w-full max-w-xl">
-            <p data-hero-item className="type-body text-ivory/75 lg:mt-6">
-              Hand-set 22K bridal and everyday pieces, hallmarked in our own
-              atelier and made to pass down.
-            </p>
-
-            <div
-              data-hero-item
-              className="mt-6 flex flex-wrap items-center gap-3 lg:mt-9"
-            >
-              <MotionCta href="/catalogs/mehr" variant="light">
-                Shop Bridal
-              </MotionCta>
-              <MotionCta
-                href="/catalogs/rozana"
-                variant="outline"
-                arrow
-                className="text-ivory"
-              >
-                Shop Everyday
-              </MotionCta>
             </div>
           </div>
         </div>
