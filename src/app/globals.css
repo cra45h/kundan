@@ -1543,13 +1543,27 @@
     max-width: 68ch;
   }
 
+  /* The bar has to hold one line on a phone, so it runs smaller and
+     tighter there. Size alone cannot do it: the copy still has to fit the
+     character budget noted in config/site.ts — at 360px this setting
+     carries roughly 50 characters. */
   .type-announce {
     font-family: var(--font-body);
     font-weight: 400;
-    font-size: 0.75rem;
+    font-size: 0.625rem;
     line-height: 1.4;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
+    /* Deliberately allowed to wrap. `nowrap` held one line but clipped the
+       end of the sentence at 320px, and a half-read offer is worse than a
+       second line. At 360 and up this setting fits with room to spare. */
+  }
+
+  @media (min-width: 640px) {
+    .type-announce {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+    }
   }
 
   .type-nav {

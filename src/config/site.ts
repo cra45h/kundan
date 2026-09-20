@@ -27,8 +27,16 @@ export const STORE_HOURS = [
   { days: "Monday", hours: "Closed" },
 ] as const; // TODO(kundan): confirm real trading hours
 
+/**
+ * Announcement bar copy.
+ *
+ * Keep it under ~50 characters. The bar is a single line on a phone, and
+ * at 360px that is what fits; the previous 63-character string wrapped to
+ * three lines, and shrinking type far enough to hold it on one line would
+ * have meant roughly 8px, which is unreadable.
+ */
 export const ANNOUNCEMENT_TEXT =
-  "Complimentary insured shipping across Pakistan — on every order"; // TODO(kundan): real offer
+  "Complimentary insured shipping across Pakistan"; // TODO(kundan): real offer
 
 export const CONTACT = {
   email: "hello@kundan.example", // TODO(kundan): real inbox
