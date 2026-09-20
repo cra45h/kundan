@@ -38,13 +38,12 @@ export function Manifesto() {
       );
       const rule = stage.querySelector<HTMLElement>("[data-philo-rule]");
       const body = stage.querySelector<HTMLElement>("[data-philo-body]");
-      const urdu = stage.querySelector<HTMLElement>("[data-philo-urdu]");
       const pillars = gsap.utils.toArray<HTMLElement>(
         stage.querySelectorAll("[data-philo-pillar]")
       );
 
       if (reduce) {
-        gsap.set([eyebrow, ...lines, rule, body, urdu, ...pillars], {
+        gsap.set([eyebrow, ...lines, rule, body, ...pillars], {
           clearProps: "all",
           autoAlpha: 1,
           y: 0,
@@ -58,7 +57,6 @@ export function Manifesto() {
         gsap.set(lines, { yPercent: 110 });
         gsap.set(rule, { scaleX: 0, transformOrigin: "center center" });
         gsap.set(body, { autoAlpha: 0, y: 24 });
-        gsap.set(urdu, { autoAlpha: 0, y: 16 });
         gsap.set(pillars, { autoAlpha: 0, y: 28 });
       };
 
@@ -91,7 +89,6 @@ export function Manifesto() {
           )
           .to(rule, { scaleX: 1, duration: 0.14 }, 0.28)
           .to(body, { autoAlpha: 1, y: 0, duration: 0.14 }, 0.32)
-          .to(urdu, { autoAlpha: 1, y: 0, duration: 0.12 }, 0.38)
           .to(
             pillars,
             { autoAlpha: 1, y: 0, duration: 0.16, stagger: 0.05 },
@@ -129,7 +126,6 @@ export function Manifesto() {
           )
           .to(rule, { scaleX: 1, duration: 0.45, ease: "power2.out" }, 0.45)
           .to(body, { autoAlpha: 1, y: 0, duration: 0.55 }, 0.55)
-          .to(urdu, { autoAlpha: 1, y: 0, duration: 0.5 }, 0.68)
           .to(
             pillars,
             { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08 },
@@ -243,15 +239,6 @@ export function Manifesto() {
               Born at a single workbench in Lahore, where kundan-setting —
               pressing uncut stone into gold — passed hand to hand long before
               it was ever a shop. It still starts there today.
-            </p>
-
-            <p
-              data-philo-urdu
-              className="mt-5 font-display text-2xl tracking-[0.14em] text-gold/45 sm:mt-6 sm:text-3xl"
-              lang="ur"
-              dir="rtl"
-            >
-              کندن
             </p>
 
             <div className="mt-10 grid w-full max-w-xl grid-cols-3 gap-4 sm:mt-14 sm:gap-8">

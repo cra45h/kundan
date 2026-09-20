@@ -40,7 +40,6 @@ type MobileMenuProps = {
 function buildTree(links: MenuLink[]): NavNode[] {
   const catalogChildren: SubLink[] = CATALOGS.map((slug) => ({
     label: catalogMeta[slug].title,
-    hint: catalogMeta[slug].urduHint,
     description: catalogMeta[slug].subtitle,
     href: `/catalogs/${slug}`,
     image: catalogMeta[slug].image,

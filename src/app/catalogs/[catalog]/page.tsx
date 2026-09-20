@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SiteShell } from "@/components/site/SiteShell";
+import { Reveal } from "@/components/ui/Reveal";
 import { CatalogHero } from "@/components/CatalogHero";
 import { CatalogLookbook } from "@/components/CatalogLookbook";
 import {
@@ -50,39 +51,50 @@ export default async function CatalogPage({ params }: PageProps) {
 
       <CatalogLookbook meta={meta} products={products} />
 
-      <div className="mx-auto max-w-[1280px] border-t border-border px-4 py-14 sm:px-6 md:py-20 lg:px-8">
-          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+      <section
+        className="border-t border-border bg-paper"
+        aria-labelledby="continue-heading"
+      >
+        <div className="mx-auto max-w-[1280px] px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <Reveal className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 className="type-h2">Continue exploring</h2>
+              <h2 id="continue-heading" className="type-h2">
+                Continue exploring
+              </h2>
               <p className="type-body mt-3 max-w-sm">
-                Other houses of the maison, and the materials that compose them.
+                Other houses of the maison, and the materials that compose
+                them.
               </p>
             </div>
-            <nav
-              aria-label="Related collections"
-              className="flex flex-wrap gap-x-8 gap-y-3"
-            >
-              {others.map((c) => (
-                <Link
-                  key={c}
-                  href={`/catalogs/${c}`}
-                  className="type-nav text-muted hover:text-ink"
-                >
-                  {catalogMeta[c].title}
-                </Link>
-              ))}
-              {MATERIALS.map((m) => (
-                <Link
-                  key={m}
-                  href={`/materials/${m}`}
-                  className="type-nav text-muted hover:text-ink"
-                >
-                  {materialMeta[m].title}
-                </Link>
-              ))}
+
+            <nav aria-label="Related collections">
+              <ul className="flex flex-wrap gap-x-8 gap-y-3">
+                {others.map((c) => (
+                  <li key={c}>
+                    <Link
+                      href={`/catalogs/${c}`}
+                      className="type-nav inline-flex min-h-11 items-center text-muted hover:text-ink"
+                    >
+                      {catalogMeta[c].title}
+                    </Link>
+                  </li>
+                ))}
+                {MATERIALS.map((m) => (
+                  <li key={m}>
+                    <Link
+                      href={`/materials/${m}`}
+                      className="type-nav inline-flex min-h-11 items-center text-muted hover:text-ink"
+                    >
+                      {materialMeta[m].title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </nav>
-          </div>
-      </div>
+          </Reveal>
+        </div>
+      </section>
+
     </SiteShell>
   );
 }

@@ -15,7 +15,6 @@ export type CatalogScene = {
 export type CatalogMeta = {
   slug: Catalog;
   title: string;
-  urduHint: string;
   subtitle: string;
   tagline: string;
   description: string;
@@ -40,7 +39,6 @@ export const catalogMeta: Record<Catalog, CatalogMeta> = {
   mehr: {
     slug: "mehr",
     title: "Mehr",
-    urduHint: "محبت",
     subtitle: "Bridal",
     tagline: "For the dulhan’s first light",
     description:
@@ -88,7 +86,6 @@ export const catalogMeta: Record<Catalog, CatalogMeta> = {
   noor: {
     slug: "noor",
     title: "Noor",
-    urduHint: "نور",
     subtitle: "High jewellery",
     tagline: "Statement light for the maison",
     description:
@@ -126,7 +123,6 @@ export const catalogMeta: Record<Catalog, CatalogMeta> = {
   rozana: {
     slug: "rozana",
     title: "Rozana",
-    urduHint: "روزانہ",
     subtitle: "Everyday gold",
     tagline: "Worn from chai to city",
     description:

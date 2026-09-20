@@ -619,15 +619,6 @@ export function CatalogsShowcase() {
                     </p>
 
                     <p
-                      data-house-urdu
-                      className="mt-2 font-display text-[clamp(1.1rem,2.4vw,1.6rem)] text-ivory/45"
-                      lang="ur"
-                      dir="rtl"
-                    >
-                      {item.urduHint}
-                    </p>
-
-                    <p
                       data-house-body
                       className="mt-5 max-w-md text-[13px] leading-[1.75] text-ivory/65 sm:mt-6 sm:text-[14px] md:text-[15px] md:leading-[1.85]"
                     >

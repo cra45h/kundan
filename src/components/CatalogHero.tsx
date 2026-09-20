@@ -1,57 +1,31 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import { catalogMeta, type Catalog } from "@/lib/catalogs";
 import { isLocalPublicSrc } from "@/lib/local-image";
+import { Accent } from "@/components/ui/Accent";
+import { MotionCta } from "@/components/motion/MotionCta";
 
-gsap.registerPlugin(useGSAP);
-
-type CatalogHeroProps = {
-  catalog: Catalog;
-};
-
-/** Full-bleed catalog hero — calm, photographic, maison-grade. */
-export function CatalogHero({ catalog }: CatalogHeroProps) {
+/**
+ * Catalog masthead — full-bleed plate with the house name over it.
+ *
+ * Rebuilt on the site's system: the shared type scale and gold accent,
+ * the standard 1280px measure, and the same CTA component as the hero.
+ * It previously carried its own display sizes, `container-luxury`, the
+ * legacy `btn-hero-atelier` pill and a bespoke GSAP entrance.
+ *
+ * Server-rendered — this plate is the LCP image on a catalog page, so it
+ * must not wait on a client bundle. The scroll reveal below it is handled
+ * by the page-wide controller.
+ */
+export function CatalogHero({ catalog }: { catalog: Catalog }) {
   const meta = catalogMeta[catalog];
-  const rootRef = useRef<HTMLElement>(null);
-
-  useGSAP(
-    () => {
-      const reduce = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-      if (reduce) return;
-
-      gsap.set(".ch-line", { yPercent: 110 });
-      gsap.set([".ch-crumb", ".ch-urdu", ".ch-copy", ".ch-cta"], {
-        autoAlpha: 0,
-        y: 20,
-      });
-      gsap.set(".ch-bg-img", { scale: 1.08 });
-
-      gsap
-        .timeline({ defaults: { ease: "power3.out" } })
-        .to(".ch-bg-img", { scale: 1, duration: 1.8, ease: "power2.out" }, 0)
-        .to(".ch-crumb", { autoAlpha: 1, y: 0, duration: 0.65 }, 0.2)
-        .to(".ch-urdu", { autoAlpha: 1, y: 0, duration: 0.7 }, 0.3)
-        .to(".ch-line", { yPercent: 0, duration: 1 }, 0.35)
-        .to(".ch-copy", { autoAlpha: 1, y: 0, duration: 0.75 }, 0.55)
-        .to(".ch-cta", { autoAlpha: 1, y: 0, duration: 0.65 }, 0.75);
-    },
-    { scope: rootRef }
-  );
 
   return (
     <section
-      ref={rootRef}
-      className="catalog-hero relative isolate min-h-[88svh] overflow-hidden md:min-h-[92svh]"
+      className="on-dark catalog-hero relative isolate -mt-16 flex min-h-[78svh] flex-col md:min-h-[86svh]"
       aria-label={`${meta.title} — ${meta.subtitle}`}
     >
-      <div className="absolute inset-0 overflow-hidden" aria-hidden>
+      <div className="absolute inset-0 -z-10 overflow-hidden" aria-hidden>
         <Image
           src={meta.heroImage}
           alt=""
@@ -59,48 +33,47 @@ export function CatalogHero({ catalog }: CatalogHeroProps) {
           priority
           sizes="100vw"
           unoptimized={isLocalPublicSrc(meta.heroImage)}
-          className="ch-bg-img object-cover object-center will-change-transform"
+          className="object-cover object-center"
           style={{ objectPosition: meta.heroObjectPosition }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/45 to-ink/15" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/65 via-transparent to-ink/20" />
+        {/* Two washes: one from the left to hold the copy, one from the
+            base so the plate settles into the page rather than stopping. */}
+        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(7,9,14,0.86)_0%,rgba(7,9,14,0.5)_42%,rgba(7,9,14,0.12)_72%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,9,14,0.5)_0%,transparent_34%,rgba(7,9,14,0.55)_100%)]" />
       </div>
 
-      <div className="container-luxury relative z-10 flex min-h-[88svh] flex-col justify-end pb-14 pt-28 md:min-h-[92svh] md:pb-20 md:pt-36">
-        <nav className="ch-crumb mb-auto text-[11px] tracking-[0.16em] text-ivory/50 uppercase">
-          <Link href="/" className="transition-colors hover:text-gold">
-            Home
-          </Link>
-          <span className="mx-2 text-ivory/25">/</span>
-          <Link href="/catalogs/mehr" className="transition-colors hover:text-gold">
-            Catalogs
-          </Link>
-          <span className="mx-2 text-ivory/25">/</span>
-          <span className="text-gold">{meta.title}</span>
+      <div className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col px-4 pt-24 pb-12 sm:px-6 md:pt-28 md:pb-16 lg:px-8">
+        <nav aria-label="Breadcrumb" className="mb-auto">
+          <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <li>
+              <Link href="/" className="type-nav text-ivory/60 hover:text-ivory">
+                Home
+              </Link>
+            </li>
+            <li className="flex items-center gap-2">
+              <span aria-hidden className="text-ivory/30">
+                /
+              </span>
+              <span className="type-nav text-ivory" aria-current="page">
+                {meta.title}
+              </span>
+            </li>
+          </ol>
         </nav>
 
         <div className="mt-16 max-w-xl md:mt-20">
-          <p className="ch-urdu font-display text-2xl text-gold/75 md:text-[1.75rem]">
-            {meta.urduHint}
-          </p>
+          <p className="type-nav text-ivory/70">{meta.subtitle}</p>
 
-          <h1 className="mt-3 font-display text-[clamp(3.5rem,9vw,6.5rem)] leading-[0.92] tracking-[-0.02em] text-ivory">
-            <span className="inline-block overflow-hidden align-bottom">
-              <span className="ch-line inline-block">{meta.title}</span>
-            </span>
+          <h1 className="type-h1 mt-4 text-ivory">
+            The <Accent onDark>{meta.title}</Accent> house
           </h1>
 
-          <p className="ch-copy mt-5 max-w-md text-[15px] leading-[1.75] text-ivory/70 md:mt-6">
-            {meta.tagline}
-          </p>
+          <p className="type-body mt-5 text-ivory/75">{meta.tagline}</p>
 
-          <div className="ch-cta mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
-            <a
-              href="#catalog-grid"
-              className="btn-hero-atelier pressable text-[11px] tracking-[0.18em] uppercase"
-            >
+          <div className="mt-8">
+            <MotionCta href="#catalog-grid" variant="light">
               View the collection
-            </a>
+            </MotionCta>
           </div>
         </div>
       </div>

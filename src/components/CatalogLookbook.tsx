@@ -1,216 +1,178 @@
-"use client";
-
 import Image from "next/image";
-import { useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { CatalogMeta } from "@/lib/catalogs";
 import type { Product } from "@/lib/products";
 import { ProductCard } from "@/components/sections/ProductCard";
+import { Accent } from "@/components/ui/Accent";
+import { Reveal } from "@/components/ui/Reveal";
+import { Parallax } from "@/components/ui/Parallax";
 import { isLocalPublicSrc } from "@/lib/local-image";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
-
-type CatalogLookbookProps = {
+/**
+ * Catalog body — the house's story, two editorial scenes, and its pieces.
+ *
+ * Rebuilt on the shared system. It used to run its own ScrollTriggers over
+ * `.lb-intro`, `.lb-reveal` and `.lb-card`, which duplicated the page-wide
+ * reveal controller and gave catalog pages a different rhythm from every
+ * other route; those markers are now plain `<Reveal>` and the one batched
+ * trigger in SiteShell drives them.
+ *
+ * Server component — nothing here needs client state, and the page's LCP
+ * plate sits directly above it.
+ */
+export function CatalogLookbook({
+  meta,
+  products,
+}: {
   meta: CatalogMeta;
   products: Product[];
-};
-
-/**
- * Clean maison lookbook — story, photography, then the product edit.
- */
-export function CatalogLookbook({ meta, products }: CatalogLookbookProps) {
-  const rootRef = useRef<HTMLDivElement>(null);
+}) {
   const feature = meta.scenes[0];
   const closer = meta.scenes[2] ?? meta.scenes[1];
 
-  useGSAP(
-    () => {
-      const reduce = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-      if (reduce) return;
-
-      const root = rootRef.current;
-      if (!root) return;
-
-      gsap.from(".lb-intro > *", {
-        y: 24,
-        autoAlpha: 0,
-        duration: 0.85,
-        stagger: 0.08,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".lb-intro",
-          start: "top 88%",
-          once: true,
-        },
-      });
-
-      gsap.utils.toArray<HTMLElement>(".lb-reveal").forEach((el) => {
-        gsap.fromTo(
-          el,
-          { y: 28, autoAlpha: 0 },
-          {
-            y: 0,
-            autoAlpha: 1,
-            duration: 0.9,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 88%",
-              once: true,
-            },
-          }
-        );
-      });
-
-      gsap.utils.toArray<HTMLElement>(".lb-products").forEach((grid) => {
-        const cards = grid.querySelectorAll(".lb-card");
-        gsap.set(cards, { y: 32, autoAlpha: 0 });
-        ScrollTrigger.batch(cards, {
-          start: "top 92%",
-          once: true,
-          onEnter: (batch) => {
-            gsap.to(batch, {
-              y: 0,
-              autoAlpha: 1,
-              duration: 0.75,
-              stagger: 0.06,
-              ease: "power2.out",
-              overwrite: true,
-            });
-          },
-        });
-      });
-
-      const safety = window.setTimeout(() => {
-        root.querySelectorAll(".lb-card, .lb-reveal").forEach((el) => {
-          if (getComputedStyle(el).opacity === "0") {
-            gsap.set(el, { autoAlpha: 1, clearProps: "transform" });
-          }
-        });
-      }, 2400);
-
-      requestAnimationFrame(() => ScrollTrigger.refresh());
-      return () => window.clearTimeout(safety);
-    },
-    { scope: rootRef, dependencies: [meta.slug] }
-  );
-
   return (
-    <div ref={rootRef} className="bg-white">
-      <section className="container-luxury border-b border-border py-16 md:py-20 lg:py-24">
-        <div className="lb-intro grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-12">
-          <div className="lg:col-span-5">
-            <h2
-              id="catalog-grid"
-              className="scroll-mt-28 font-display text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.08] tracking-[0.01em] text-ink"
-            >
-              Inside {meta.title}
-            </h2>
-          </div>
-          <div className="lg:col-span-6 lg:col-start-7">
-            <p className="max-w-xl text-[15px] leading-[1.8] text-muted">
-              {meta.story}
-            </p>
-            <p className="mt-5 max-w-xl text-[15px] leading-[1.8] text-muted">
-              {meta.description}
-            </p>
-          </div>
+    <div className="bg-paper">
+      {/* The house, in its own words */}
+      <section className="border-b border-border bg-ivory">
+        <div className="mx-auto max-w-[1280px] px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+          <Reveal className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-12">
+            <div className="lg:col-span-5">
+              <h2 id="catalog-story" className="type-h2 scroll-mt-24">
+                {meta.title}
+              </h2>
+            </div>
+            <div className="lg:col-span-6 lg:col-start-7">
+              <p className="type-body">{meta.description}</p>
+              <p className="type-body mt-5">{meta.story}</p>
+            </div>
+          </Reveal>
         </div>
       </section>
 
+      {/* Feature scene */}
       {feature ? (
-        <section className="lb-reveal container-luxury py-16 md:py-24">
-          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
-            <div className="relative aspect-[4/5] overflow-hidden bg-white lg:col-span-7 lg:aspect-[5/4]">
-              <Image
-                src={feature.image}
-                alt={feature.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 58vw"
-                unoptimized={isLocalPublicSrc(feature.image)}
-                className="object-cover"
-                style={{ objectPosition: feature.objectPosition ?? "50% 20%" }}
-              />
-            </div>
-            <div className="max-w-md lg:col-span-5">
-              <p className="text-[11px] tracking-[0.22em] text-gold uppercase">
-                {feature.caption}
-              </p>
-              <h3 className="mt-4 font-display text-[clamp(1.85rem,3vw,2.75rem)] leading-[1.12] text-ink">
-                {feature.title}
-              </h3>
-              <p className="mt-5 text-[15px] leading-[1.8] text-muted">
-                {feature.body}
-              </p>
-              <span className="mt-8 block h-px w-10 bg-gold" aria-hidden />
-            </div>
-          </div>
-        </section>
+        <Scene
+          image={feature.image}
+          objectPosition={feature.objectPosition}
+          caption={feature.caption}
+          title={feature.title}
+          body={feature.body}
+        />
       ) : null}
 
-      <section className="container-luxury py-16 md:py-24">
-        <div className="lb-reveal mb-12 flex flex-col gap-3 border-b border-border pb-8 md:mb-14 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h3 className="font-display text-[clamp(2rem,3.5vw,2.85rem)] leading-[1.1] text-ink">
-              The collection
-            </h3>
-            <p className="mt-3 max-w-md text-[14px] leading-relaxed text-muted">
-              Pieces selected for {meta.title} — composed for ceremony and
-              lasting wear.
+      {/* The pieces */}
+      <section
+        className="py-14 md:py-20"
+        aria-labelledby="catalog-grid-heading"
+      >
+        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+          <Reveal className="mb-10 flex flex-col gap-3 border-b border-border pb-8 md:mb-12 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h3 id="catalog-grid-heading" className="type-h2 scroll-mt-24">
+                Pieces from <Accent>{meta.title}</Accent>
+              </h3>
+              <p className="type-body mt-3">{meta.tagline}</p>
+            </div>
+            <p className="type-nav shrink-0 text-muted">
+              {products.length} {products.length === 1 ? "piece" : "pieces"}
             </p>
-          </div>
-          <p className="text-[11px] tracking-[0.18em] text-muted uppercase">
-            {products.length} {products.length === 1 ? "piece" : "pieces"}
-          </p>
-        </div>
+          </Reveal>
 
-        {products.length > 0 ? (
-          <div className="lb-products grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 lg:grid-cols-4">
-            {products.map((product) => (
-              <div key={product.id} className="lb-card">
-                <ProductCard product={product} />
+          {/* scroll-mt clears the sticky header when the hero CTA lands here */}
+          <div id="catalog-grid" className="scroll-mt-24">
+            {products.length > 0 ? (
+              <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 lg:grid-cols-4">
+                {products.map((product, i) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    priority={i < 4}
+                  />
+                ))}
               </div>
-            ))}
+            ) : (
+              <div className="border border-border bg-card px-6 py-16 text-center">
+                <p className="type-h3">
+                  {meta.title} is being restocked
+                </p>
+                <p className="type-body mx-auto mt-3">
+                  New pieces are added as they leave the atelier.
+                </p>
+              </div>
+            )}
           </div>
-        ) : (
-          <p className="py-12 text-center text-sm text-muted">
-            Pieces in {meta.title} are arriving soon.
-          </p>
-        )}
+        </div>
       </section>
 
-      {closer ? (
-        <section className="lb-reveal border-t border-border bg-white">
-          <div className="container-luxury grid items-center gap-10 py-16 md:py-24 lg:grid-cols-12 lg:gap-16">
-            <div className="max-w-md lg:col-span-5 lg:order-1">
-              <p className="text-[11px] tracking-[0.22em] text-gold uppercase">
-                {closer.caption}
-              </p>
-              <h3 className="mt-4 font-display text-[clamp(1.85rem,3vw,2.75rem)] leading-[1.12] text-ink">
-                {closer.title}
-              </h3>
-              <p className="mt-5 text-[15px] leading-[1.8] text-muted">
-                {closer.body}
-              </p>
-            </div>
-            <div className="relative aspect-[4/5] overflow-hidden bg-white lg:col-span-7 lg:order-2 lg:aspect-[5/4]">
-              <Image
-                src={closer.image}
-                alt={closer.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 58vw"
-                unoptimized={isLocalPublicSrc(closer.image)}
-                className="object-cover"
-                style={{ objectPosition: closer.objectPosition ?? "50% 20%" }}
-              />
-            </div>
-          </div>
-        </section>
+      {/* Closing scene */}
+      {closer && closer !== feature ? (
+        <Scene
+          image={closer.image}
+          objectPosition={closer.objectPosition}
+          caption={closer.caption}
+          title={closer.title}
+          body={closer.body}
+          flip
+        />
       ) : null}
     </div>
+  );
+}
+
+/**
+ * One editorial scene — image one side, copy the other, alternating.
+ * The plate drifts on scroll, the same treatment the homepage gives its
+ * large images.
+ */
+function Scene({
+  image,
+  objectPosition,
+  caption,
+  title,
+  body,
+  flip = false,
+}: {
+  image: string;
+  objectPosition?: string;
+  caption: string;
+  title: string;
+  body: string;
+  flip?: boolean;
+}) {
+  return (
+    <section className="border-b border-border bg-ivory">
+      <div className="mx-auto grid max-w-[1280px] items-center gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-12 lg:gap-16 lg:px-8">
+        <Reveal
+          className={`lg:col-span-7 ${flip ? "lg:order-2" : ""}`}
+        >
+          <Parallax
+            amount={9}
+            className="relative aspect-4/5 w-full bg-card sm:aspect-5/4"
+          >
+            <div className="absolute inset-[-6%]">
+              <Image
+                src={image}
+                alt={`${title} — ${caption}`}
+                fill
+                loading="lazy"
+                sizes="(max-width: 1024px) 100vw, 58vw"
+                unoptimized={isLocalPublicSrc(image)}
+                className="object-cover"
+                style={objectPosition ? { objectPosition } : undefined}
+              />
+            </div>
+          </Parallax>
+        </Reveal>
+
+        <Reveal
+          delay={80}
+          className={`lg:col-span-5 ${flip ? "lg:order-1" : ""}`}
+        >
+          <p className="type-nav text-muted">{caption}</p>
+          <h3 className="type-h2 mt-4">{title}</h3>
+          <p className="type-body mt-5">{body}</p>
+          <span className="mt-8 block h-px w-10 bg-gold-deep" aria-hidden />
+        </Reveal>
+      </div>
+    </section>
   );
 }
